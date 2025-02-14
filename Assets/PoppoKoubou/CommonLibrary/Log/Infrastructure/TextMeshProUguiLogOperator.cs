@@ -1,0 +1,119 @@
+﻿using System;
+using PoppoKoubou.CommonLibrary.Log.Domain;
+using TMPro;
+using Cysharp.Text;
+
+namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
+{
+    /// <summary>ログオペレータ</summary>
+    // ReSharper disable once ClassNeverInstantiated.Global
+    public class TextMeshProUguiLogOperator : ILogOperator
+    {
+        /// <summary>TextMeshProUGUI</summary>
+        private TextMeshProUGUI _tmpText;
+
+        /// <summary>Stringビルダー</summary>
+        private Utf16ValueStringBuilder _sb;
+        
+        /// <summary>初期化</summary>
+        public void Initialize(object logObject)
+        {
+            _tmpText = (TextMeshProUGUI)logObject;
+            _sb = ZString.CreateStringBuilder();
+            _sb.Append(_tmpText.text);
+        }
+
+        /// <summary>イベントログを処理する</summary>
+        public void OnLogEvent(Domain.LogMessage ev)
+        {
+            switch (ev.Type)
+            {
+                case LogType.AddLastLine: AddLastLineLog(ev.Message); break;
+                case LogType.ReplaceLastLine: ReplaceLastLineLog(ev.Message); break;
+            }
+        }
+
+        /// <summary>ログテキストを更新する</summary>
+        public void AddLastLineLog(string log)
+        {
+            // ログがまだ空ならそのまま追加、そうでなければ改行を追加してから追加
+            if (_sb.Length == 0)
+            {
+                _sb.Append(log);
+            }
+            else
+            {
+                _sb.AppendFormat("\n{0}",log);
+            }
+            _tmpText.text = _sb.ToString();
+
+            // ログテキストがオーバーフローしてるなら、先頭行を削除する、これはオーバーフローが解消されるまで何度も削除する
+            while (IsTextOverflowing())
+            {
+                var sbSpan = _sb.AsSpan();
+                var index = sbSpan.IndexOf('\n');
+                if (index >= 0)
+                {
+                    _sb.Remove(0, index + 1);
+                }
+                else
+                {
+                    // 1行しかない場合はループを抜ける
+                    break;
+                }
+                _tmpText.text = _sb.ToString();
+            }
+        }
+
+        /// <summary>ログテキストの最後の行を条件付きで置換する</summary>
+        public void ReplaceLastLineLog(string log)
+        {
+            // logを空白で分割し、最初の要素を取得する
+            string[] lines = log.Split(' ');
+            var firstTokenOfLog = (lines.Length > 0) ? lines[0] : null;
+            // 最初の要素がnullなら何もしない
+            if (firstTokenOfLog == null) return;
+            // ログの最後の行を取得
+            var sbSpan = _sb.AsSpan();
+            var index = sbSpan.LastIndexOf('\n');
+            // 最後の改行が見つかったら、その後ろの文字列の開始位置を取得する
+            var startIndex = (index >= 0) ? index + 1 : 0;
+            // 最後の行が見つかったら
+            if (index >= 0)
+            {
+                // 最後の行の先頭が最初の要素と一致するなら、最後の行を置き換え、そうでなければ追加
+                if (sbSpan.Slice(startIndex).StartsWith(firstTokenOfLog.AsSpan()))
+                {
+                    _sb.Remove(startIndex, sbSpan.Length - startIndex);
+                    _sb.AppendFormat("{0}", log);
+                }
+                else
+                {
+                    AddLastLineLog(log);
+                }
+            }
+            // 最後の行が見つからなかったら追加する
+            else
+            {
+                AddLastLineLog(log);
+            }
+            _tmpText.text = _sb.ToString();
+        }
+
+        /// <summary>テキストがオーバーフローしているかどうかを判定する</summary>
+        private bool IsTextOverflowing()
+        {
+            // テキストの再構築
+            _tmpText.ForceMeshUpdate();
+            // テキストの必要な高さとRectTransformの高さを比較
+            return _tmpText.preferredHeight > _tmpText.rectTransform.rect.height;
+        }
+
+        /// <summary>リソース解放</summary>
+        public void Dispose()
+        {
+            _tmpText = null;
+            _sb.Dispose();
+        }
+    }
+}

@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: edbb5e379ddb75c49a91c94891c03656
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - BIZ UDPGothic
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 143aa2c901dec26419903a8ac58a49fb, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
