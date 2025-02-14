@@ -1,6 +1,8 @@
-﻿using MessagePipe;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Linq;
+using MessagePipe;
 using PoppoKoubou.CommonLibrary.UI.Domain;
-using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -15,19 +17,24 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
         [Inject] private IPublisher<InteractUI> _interactUIPublisher;
         
         /// <summary>コンポーネント初期化</summary>
-        private void Start()
+        private async void Start()
         {
-            // ボタンコンポーネント取得
-            var button = GetComponent<Button>();
-            if (button == null)
+            try
             {
-                Debug.LogError($"Button component not found.");
-                return;
+                // ボタンコンポーネント取得
+                if (!TryGetComponent<Button>(out var button))
+                {
+                    Debug.LogError($"Button component not found.");
+                    return;
+                }
+                await button.OnClickAsAsyncEnumerable(this.destroyCancellationToken).ForEachAwaitWithCancellationAsync(
+                    async (_, ct) => _interactUIPublisher.Publish(new InteractUI(InteractUIType.ClickButton, gameObject, message)),
+                    destroyCancellationToken);
             }
-            // ボタンクリック処理
-            button.OnClickAsObservable()
-                .Subscribe(_ => _interactUIPublisher.Publish(new InteractUI(InteractUIType.ClickButton, gameObject, message)))
-                .AddTo(this);
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
     }
 }
