@@ -1,6 +1,16 @@
 # Poppo Library
 
+## Install
+
+- Add to manifest.json
+
+```
+    "jp.megamin.poppokoubou.library": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou",
+```
+
 ## Require Library
+
+- Add to manifest.json
 
 ```
     "com.cysharp.messagepipe": "1.8.1",
