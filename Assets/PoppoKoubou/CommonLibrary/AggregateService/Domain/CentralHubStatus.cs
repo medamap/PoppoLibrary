@@ -16,14 +16,14 @@
         
         /// <summary>サービスノード登録待ち</summary>
         public static CentralHubStatus WaitingRegistrationServiceNode() =>
-            new CentralHubStatus(CentralHubStatusPhase.WaitingRegistrationServiceNode, 0f);
+            new (CentralHubStatusPhase.WaitingRegistrationServiceNode, 0f);
         
         /// <summary>サービスノード初期化待ち</summary>
         public static CentralHubStatus WaitingInitializeServiceNode(float priority) =>
-            new CentralHubStatus(CentralHubStatusPhase.WaitingInitializeServiceNode, priority);
+            new (CentralHubStatusPhase.WaitingInitializeServiceNode, priority);
         
         /// <summary>サービスノード開始許可</summary>
         public static CentralHubStatus AllowStartServiceNode() =>
-            new CentralHubStatus(CentralHubStatusPhase.AllowStartServiceNode, 0f);
+            new (CentralHubStatusPhase.AllowStartServiceNode, 0f);
     }
 }

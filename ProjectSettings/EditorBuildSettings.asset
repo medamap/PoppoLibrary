@@ -4,5 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/PoppoKoubou-Demo/UdpBroadcastDemo/Scene/UdpBroadcastDemo.unity
+    guid: 77eebd1ae39e6fd46824e2206001d68b
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

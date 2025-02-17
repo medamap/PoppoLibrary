@@ -1,0 +1,32 @@
+{
+    "name": "PoppoKoubouDemo",
+    "rootNamespace": "",
+    "references": [
+        "MessagePipe",
+        "MessagePipe.VContainer",
+        "MessagePipe.Interprocess",
+        "VContainer",
+        "UniTask",
+        "UniTask.Linq",
+        "UniTask.TextMeshPro",
+        "Unity.TextMeshPro",
+        "UnityEngine.UI",
+        "ZString",
+        "PoppoKoubou"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "ObservableCollections.R3.dll",
+        "ObservableCollections.dll",
+        "R3.dll",
+        "MessagePack.dll",
+        "MessagePack.Annotations.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

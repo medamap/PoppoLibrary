@@ -13,7 +13,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Application
 {
     /// <summary>UIサービス</summary>
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class UIService : ServiceNode, IDisposable
+    public class UIService : ServiceNode
     {
         /// <summary>UIインタラクトディスパッチ</summary>
         // ReSharper disable once InconsistentNaming
@@ -57,7 +57,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Application
         }
         
         /// <summary>リソース解放</summary>
-        public void Dispose()
+        public override void Dispose()
         {
             _interactUIDispatch?.Dispose();
         }

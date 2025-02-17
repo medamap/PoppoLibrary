@@ -7,6 +7,7 @@ using MessagePipe;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using UnityEngine;
+using VContainer;
 using VContainer.Unity;
 
 namespace PoppoKoubou.CommonLibrary.AggregateService.Application
@@ -25,7 +26,7 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
         private readonly ISubscriber<ServiceNodeStatus> _serviceNodeStatusSubscriber;
         
         /// <summary>依存注入</summary>
-        public CentralHub(
+        [Inject] public CentralHub(
             IPublisher<LogMessage> logPublisher,
             IPublisher<CentralHubStatus> centralHubStatusPublisher,
             ISubscriber<ServiceNodeStatus> serviceNodeStatusSubscriber)
@@ -37,10 +38,7 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
         }
 
         /// <summary>カラー開始</summary>
-        private readonly string _colorStart = "<color=#a0d0ff>";
-
-        /// <summary>カラー完了</summary>
-        private readonly string _colorEnd = "</color>";
+        private readonly string _color = "#a0d0ff";
 
         /// <summary>サービスノードコレクション</summary>
         private Dictionary<int, List<ServiceNodeInfo>> _services = new ();
@@ -52,14 +50,14 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
             await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
 
             Debug.Log($"CentralHub.StartAsync()");
-            _logPublisher.Publish(LogMessage.AddLine($"{_colorStart}サービス集約ハブ起動{_colorEnd}"));
+            _logPublisher.Publish(LogMessage.AddLine($"サービス集約ハブ起動", LogLevel.Info, _color));
 
             // 0.1秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
 
             // サービスノード登録開始
             _centralHubStatusPublisher.Publish(CentralHubStatus.WaitingRegistrationServiceNode());
-            _logPublisher.Publish(LogMessage.AddLine($"{_colorStart}サービスノード登録開始{_colorEnd}"));
+            _logPublisher.Publish(LogMessage.AddLine($"サービスノード登録開始", LogLevel.Info, _color));
             
             // サービスノード登録待ち
             var dispose1 = _serviceNodeStatusSubscriber.Subscribe(
@@ -70,7 +68,7 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
                         _services[ev.ServiceNodeInfo.Priority] = list;
                     }
                     list.Add(ev.ServiceNodeInfo);
-                    _logPublisher.Publish(LogMessage.AddLine($"{_colorStart}{ev.ServiceNodeInfo.Name} 登録完了 (優先順位: {ev.ServiceNodeInfo.Priority}){_colorEnd}"));
+                    _logPublisher.Publish(LogMessage.AddLine($"{ev.ServiceNodeInfo.Name} 登録完了 (優先順位: {ev.ServiceNodeInfo.Priority})", LogLevel.Info, _color));
                 },
                 ev => ev.Phase == ServiceNodeStatusPhase.RegistrationServiceNode
             );
@@ -86,14 +84,14 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
             {
                 // サービスノード登録開始
                 _centralHubStatusPublisher.Publish(CentralHubStatus.WaitingInitializeServiceNode(priority));
-                _logPublisher.Publish(LogMessage.AddLine($"{_colorStart}サービスノード初期化待ち (優先順位: {priority}){_colorEnd}"));
+                _logPublisher.Publish(LogMessage.AddLine($"サービスノード初期化待ち (優先順位: {priority})", LogLevel.Info, _color));
                 
                 // サービスノード初期化待ち
                 var count = 0;
                 var dispose2 = _serviceNodeStatusSubscriber.Subscribe(
                     ev =>
                     {
-                        _logPublisher.Publish(LogMessage.AddLine($"{_colorStart}{ev.ServiceNodeInfo.Name} 初期化完了 (優先順位: {ev.ServiceNodeInfo.Priority}){_colorEnd}"));
+                        _logPublisher.Publish(LogMessage.AddLine($"{ev.ServiceNodeInfo.Name} 初期化完了 (優先順位: {ev.ServiceNodeInfo.Priority})", LogLevel.Info, _color));
                         count++;
                     },
                     ev => ev.Phase == ServiceNodeStatusPhase.CompleteInitializeServiceNode &&
@@ -104,12 +102,12 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
                 {
                     await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
                 }
-                _logPublisher.Publish(LogMessage.AddLine($"{_colorStart}サービスノード初期化完了 (優先順位: {priority}){_colorEnd}"));
+                _logPublisher.Publish(LogMessage.AddLine($"サービスノード初期化完了 (優先順位: {priority})", LogLevel.Info, _color));
             }
             
             // サービスノード開始許可
             _centralHubStatusPublisher.Publish(CentralHubStatus.AllowStartServiceNode());
-            _logPublisher.Publish(LogMessage.AddLine($"{_colorStart}サービスノード開始許可{_colorEnd}"));
+            _logPublisher.Publish(LogMessage.AddLine($"サービスノード開始許可", LogLevel.Info, _color));
         }
     }
 }

@@ -4,11 +4,12 @@ using Cysharp.Threading.Tasks;
 using MessagePipe;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.Log.Domain;
+using VContainer;
 
 namespace PoppoKoubou.CommonLibrary.AggregateService.Infrastructure
 {
     /// <summary>ノードサービス</summary>
-    public abstract class ServiceNode : IServiceNode
+    public abstract class ServiceNode : IServiceNode, IDisposable
     {
         /// <summary>ログ送信用Publisher</summary>
         protected readonly IPublisher<LogMessage> LogPublisher;
@@ -20,7 +21,7 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Infrastructure
         private readonly IPublisher<ServiceNodeStatus> _serviceNodeStatusPublisher;
 
         /// <summary>依存注入</summary>
-        protected ServiceNode(
+        [Inject] protected ServiceNode(
             string name,
             int priority,
             IPublisher<LogMessage> logPublisher,
@@ -34,11 +35,9 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Infrastructure
         }
 
         /// <summary>カラー開始</summary>
-        protected readonly string ColorStart = "<color=#ffa0a0>";
+        protected readonly string LogColor = "#ffa0a0";
+        protected readonly string ServiceLogColor = "#00ffff";
 
-        /// <summary>カラー完了</summary>
-        protected readonly string ColorEnd = "</color>";
-        
         /// <summary>サービスノード情報</summary>
         public ServiceNodeInfo ServiceNodeInfo => serviceNodeInfo;
         protected ServiceNodeInfo serviceNodeInfo;
@@ -92,13 +91,15 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Infrastructure
         /// <summary>ログ追加</summary>
         protected void LogAddLine(string log, string color = null)
         {
-            LogPublisher.Publish(LogMessage.AddLine($"{(string.IsNullOrEmpty(color) ? ColorStart : $"<color={color}>")}{log}{ColorEnd}"));
+            LogPublisher.Publish(LogMessage.AddLine($"{log}", LogLevel.Info, string.IsNullOrEmpty(color) ? LogColor : color));
         }
         
         /// <summary>ログ更新</summary>
         protected void LogReplaceLine(string log, string color = null)
         {
-            LogPublisher.Publish(LogMessage.ReplaceLine($"{(string.IsNullOrEmpty(color) ? ColorStart : $"<color={color}>")}{log}{ColorEnd}"));
+            LogPublisher.Publish(LogMessage.ReplaceLine($"{log}", LogLevel.Info, string.IsNullOrEmpty(color) ? LogColor : color));
         }
+
+        public abstract void Dispose();
     }
 }

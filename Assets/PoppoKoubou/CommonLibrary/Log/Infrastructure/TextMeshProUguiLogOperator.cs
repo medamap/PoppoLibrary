@@ -2,6 +2,7 @@
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using TMPro;
 using Cysharp.Text;
+using VContainer;
 
 namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
 {
@@ -14,6 +15,15 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
 
         /// <summary>Stringビルダー</summary>
         private Utf16ValueStringBuilder _sb;
+        
+        /// <summary>ログフォーマッタ</summary>
+        [Inject] private ILogFormatter _formatter;
+        
+        /// <summary>依存注入</summary>
+        [Inject] public TextMeshProUguiLogOperator(ILogFormatter formatter)
+        {
+            _formatter = formatter;
+        }
         
         /// <summary>初期化</summary>
         public void Initialize(object logObject)

@@ -24,3 +24,28 @@
     "org.nuget.observablecollections.r3": "3.3.3",
     "org.nuget.r3": "1.2.9",
 ```
+
+## scopedRegistries
+
+- Merge to manifest.json
+
+```yaml
+  "scopedRegistries": [
+    {
+      "name": "Unity NuGet",
+      "url": "https://unitynuget-registry.azurewebsites.net",
+      "scopes": [
+        "org.nuget"
+      ],
+      "overrideBuiltIns": false
+    },
+    {
+      "name": "OpenUPM",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.cysharp"
+      ],
+      "overrideBuiltIns": false
+    }
+  ]
+```
