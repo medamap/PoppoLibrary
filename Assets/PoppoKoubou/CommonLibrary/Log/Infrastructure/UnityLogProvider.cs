@@ -16,7 +16,9 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         private readonly ILogFormatter _formatter;
         
         /// <summary>依存注入</summary>
-        [Inject] public UnityLogProvider(ISubscriber<LogMessage> logSubscriber, ILogFormatter formatter)
+        [Inject] public UnityLogProvider(
+            ISubscriber<LogMessage> logSubscriber,
+            ILogFormatter formatter)
         {
             Debug.Log($"UnityLogProvider.UnityLogProvider()");
             _logSubscriber = logSubscriber;

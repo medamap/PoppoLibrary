@@ -7,6 +7,7 @@ using PoppoKoubou.CommonLibrary.AggregateService.Infrastructure;
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using PoppoKoubou.CommonLibrary.Network.Domain;
 using UnityEngine;
+using VContainer;
 
 namespace PoppoKoubou.CommonLibrary.Network.Application
 {
@@ -16,18 +17,20 @@ namespace PoppoKoubou.CommonLibrary.Network.Application
     {
         /// <summary>ネットワーク情報プロバイダ</summary>
         private readonly INetworkInfoProvider _networkInfoProvider;
-        /// <summary>ネットワークサービスコンテナ</summary>
-        public NetworkInfoContainer NetworkInfoContainer => _networkInfoContainer;
-        private NetworkInfoContainer _networkInfoContainer;
+        /// <summary>ネットワーク情報コンテナ</summary>
+        public INetworkInfoContainer NetworkInfoContainer => _networkInfoContainer;
+        private INetworkInfoContainer _networkInfoContainer;
 
-        /// <summary>サービスコンストラクタ</summary>
-        public NetworkService(
+        /// <summary>依存注入</summary>
+        [Inject] public NetworkService(
             IPublisher<LogMessage> logPublisher,
             ISubscriber<CentralHubStatus> centralHubStatusSubscriber,
             IPublisher<ServiceNodeStatus> serviceNodeStatusPublisher,
             INetworkInfoProvider networkInfoProvider,
-            NetworkInfoContainer networkInfoContainer)
-            : base("ネットワークサービス", 100,
+            INetworkInfoContainer networkInfoContainer)
+            : base(
+                "ネットワークサービス",
+                100,
                 logPublisher,
                 centralHubStatusSubscriber,
                 serviceNodeStatusPublisher)
@@ -44,20 +47,24 @@ namespace PoppoKoubou.CommonLibrary.Network.Application
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct); // 1ミリ秒待機
             // ネットワーク情報取得
             LogAddLine("ネットワーク情報取得");
-            var _networkInfo = await _networkInfoProvider.GetNetworkInfoAsync(ct);
-            if (_networkInfo != null)
+            var networkInfo = await _networkInfoProvider.GetNetworkInfoAsync(ct);
+            if (networkInfo is { IsError: false })
             {
                 LogAddLine("ネットワーク情報");
-                LogAddLine("Local IP : " + _networkInfo.LocalIPAddress);
-                LogAddLine("Gateway : " + _networkInfo.DefaultGateway);
-                LogAddLine("Subnet Mask : " + _networkInfo.SubnetMask);
-                LogAddLine("Network Address : " + _networkInfo.NetworkAddress);
-                LogAddLine("Broadcast Address : " + _networkInfo.BroadcastAddress);
-                _networkInfoContainer.SetNetworkInfo(_networkInfo);
+                LogAddLine("Local IP : " + networkInfo.LocalIPAddress);
+                LogAddLine("Gateway : " + networkInfo.DefaultGateway);
+                LogAddLine("Subnet Mask : " + networkInfo.SubnetMask);
+                LogAddLine("Network Address : " + networkInfo.NetworkAddress);
+                LogAddLine("Broadcast Address : " + networkInfo.BroadcastAddress);
+                _networkInfoContainer.SetNetworkInfo(networkInfo);
             }
             else
             {
                 LogAddLine("ネットワーク情報が取得できませんでした");
+                foreach (var log in networkInfo.LOG)
+                {
+                    ErrorAddLine(log);
+                }
             }
         }
 

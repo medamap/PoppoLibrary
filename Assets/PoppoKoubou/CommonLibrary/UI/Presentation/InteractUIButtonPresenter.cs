@@ -14,7 +14,14 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
         /// <summary>UIメッセージ</summary>
         [SerializeField] private string message;
         /// <summary>UIインタラクトメッセージ送信用パブリッシャー</summary>
-        [Inject] private IPublisher<InteractUI> _interactUIPublisher;
+        private IPublisher<InteractUI> _interactUIPublisher;
+        
+        /// <summary>依存注入</summary>
+        [Inject] public void Construct(
+            IPublisher<InteractUI> interactUIPublisher)
+        {
+            _interactUIPublisher = interactUIPublisher;
+        }
         
         /// <summary>コンポーネント初期化</summary>
         private async void Start()
@@ -28,7 +35,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
                     return;
                 }
                 await button.OnClickAsAsyncEnumerable(this.destroyCancellationToken).ForEachAwaitWithCancellationAsync(
-                    async (_, ct) => _interactUIPublisher.Publish(new InteractUI(InteractUIType.ClickButton, gameObject, message)),
+                    async (_, ct) => _interactUIPublisher.Publish(InteractUI.ClickButton(gameObject, message)),
                     destroyCancellationToken);
             }
             catch (Exception e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using MessagePipe;
+using PoppoKoubou.CommonLibrary.Log.Domain;
 using PoppoKoubou.CommonLibrary.UI.Domain;
 using UnityEngine;
 using VContainer;
@@ -14,12 +15,12 @@ namespace PoppoKoubou.CommonLibrary.UI.Infrastructure
         private IDisposable _disposable;
 
         /// <summary>ログメッセージ送信用Publisher</summary>
-        private readonly IPublisher<Log.Domain.LogMessage> _logPublisher;
+        private readonly IPublisher<LogMessage> _logPublisher;
         
         /// <summary>依存注入</summary>
         [Inject] public InteractUIDispatch(
             ISubscriber<InteractUI> interactUISubscriber,
-            IPublisher<Log.Domain.LogMessage> logPublisher)
+            IPublisher<LogMessage> logPublisher)
         {
             Debug.Log($"InteractUIProvider.InteractUIProvider()");
             _interactUISubscriber = interactUISubscriber;
@@ -35,7 +36,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Infrastructure
             _interactUISubscriber.Subscribe(ev =>
             {
                 // ログ送信
-                _logPublisher.Publish(Log.Domain.LogMessage.AddLine($"InteractUI受信 ev={ev.Message}"));
+                _logPublisher.Publish(LogMessage.AddLine($"InteractUI受信 ev={ev.Message}"));
                 // メッセージをカンマで分割
                 var message = ev.Message.Split(',');
                 switch (message[0])

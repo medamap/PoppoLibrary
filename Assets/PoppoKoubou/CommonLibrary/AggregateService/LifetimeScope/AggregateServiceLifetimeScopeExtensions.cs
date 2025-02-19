@@ -1,33 +1,26 @@
 ﻿using MessagePipe;
 using PoppoKoubou.CommonLibrary.AggregateService.Application;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
-using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 namespace PoppoKoubou.CommonLibrary.AggregateService.LifetimeScope
 {
-    public class AggregateServiceLifetimeScope : VContainer.Unity.LifetimeScope
+    public static class AggregateServiceLifetimeScopeExtensions
     {
-        protected override void Configure(IContainerBuilder builder)
+        public static void AddAggregateServiceMessage(this VContainer.Unity.LifetimeScope lifetimeScope, IContainerBuilder builder, MessagePipeOptions options)
         {
-            Debug.Log($"AggregateServiceLifetimeScope.Configure()");
-
-            // MessagePipeでメッセージを送受信するためのサービスを登録
-            var options = builder.RegisterMessagePipe();
-
-            //// Message //////////////////////////////////////////////////
-
             // サービス集約ハブステータスをメッセージ登録
             builder.RegisterMessageBroker<CentralHubStatus>(options);
             // サービスノードステータスをメッセージ登録
             builder.RegisterMessageBroker<ServiceNodeStatus>(options);
-
-            //// Entry Point ////////////////////////////////////////////
-
-            // サービス集約ハブをエントリポイントに登録
+        }
+        public static void AddAggregateServiceComponent(this VContainer.Unity.LifetimeScope lifetimeScope, IContainerBuilder builder)
+        {
+        }
+        public static void AddAggregateServiceEntryPoint(this VContainer.Unity.LifetimeScope lifetimeScope, IContainerBuilder builder)
+        {
             builder.RegisterEntryPoint<CentralHub>();
-
         }
     }
 }

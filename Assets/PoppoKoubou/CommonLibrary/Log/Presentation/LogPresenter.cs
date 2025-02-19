@@ -14,11 +14,20 @@ namespace PoppoKoubou.CommonLibrary.Log.Presentation
         private TextMeshProUGUI _tmpText;
 
         /// <summary>ログを受信するサブスクライバー</summary>
-        [Inject] private ISubscriber<LogMessage> _logSubscriber;
+        private ISubscriber<LogMessage> _logSubscriber;
         private IDisposable _disposable;
         
         /// <summary>ログオペレータ</summary>
-        [Inject] private ILogOperator _logOperator;
+        private ILogOperator _logOperator;
+
+        /// <summary>依存注入</summary>
+        [Inject] public void Cunstruct(
+            ISubscriber<LogMessage> logSubscriber,
+            ILogOperator logOperator)
+        {
+            _logSubscriber = logSubscriber;
+            _logOperator = logOperator;
+        }
 
         /// <summary>コンポーネントの初期化</summary>
         private void Start()
@@ -29,7 +38,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Presentation
             _logOperator.Initialize(_tmpText);
             // ログを受信するサブスクライバーを登録
             var disposables = DisposableBag.CreateBuilder();
-            _logSubscriber.Subscribe(ev => _logOperator.OnLogEvent(ev)).AddTo(disposables);
+            _logSubscriber.Subscribe(ev => _logOperator.OnLogEvent(ev, 512)).AddTo(disposables);
             _disposable = disposables.Build();
         }
 

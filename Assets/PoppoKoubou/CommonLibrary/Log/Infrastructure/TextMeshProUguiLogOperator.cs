@@ -17,7 +17,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         private Utf16ValueStringBuilder _sb;
         
         /// <summary>ログフォーマッタ</summary>
-        [Inject] private ILogFormatter _formatter;
+        private ILogFormatter _formatter;
         
         /// <summary>依存注入</summary>
         [Inject] public TextMeshProUguiLogOperator(ILogFormatter formatter)
@@ -34,17 +34,17 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         }
 
         /// <summary>イベントログを処理する</summary>
-        public void OnLogEvent(Domain.LogMessage ev)
+        public void OnLogEvent(LogMessage ev, int overLine = 0)
         {
             switch (ev.Type)
             {
-                case LogType.AddLastLine: AddLastLineLog(ev.Message); break;
-                case LogType.ReplaceLastLine: ReplaceLastLineLog(ev.Message); break;
+                case LogType.AddLastLine: AddLastLineLog(_formatter.Format(ev)); break;
+                case LogType.ReplaceLastLine: ReplaceLastLineLog(_formatter.Format(ev)); break;
             }
         }
 
         /// <summary>ログテキストを更新する</summary>
-        public void AddLastLineLog(string log)
+        public void AddLastLineLog(string log, int overLine = 0)
         {
             // ログがまだ空ならそのまま追加、そうでなければ改行を追加してから追加
             if (_sb.Length == 0)
@@ -58,7 +58,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
             _tmpText.text = _sb.ToString();
 
             // ログテキストがオーバーフローしてるなら、先頭行を削除する、これはオーバーフローが解消されるまで何度も削除する
-            while (IsTextOverflowing())
+            while (IsTextOverflowing(overLine))
             {
                 var sbSpan = _sb.AsSpan();
                 var index = sbSpan.IndexOf('\n');
@@ -76,7 +76,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         }
 
         /// <summary>ログテキストの最後の行を条件付きで置換する</summary>
-        public void ReplaceLastLineLog(string log)
+        public void ReplaceLastLineLog(string log, int overLine = 0)
         {
             // logを空白で分割し、最初の要素を取得する
             string[] lines = log.Split(' ');
@@ -111,12 +111,12 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         }
 
         /// <summary>テキストがオーバーフローしているかどうかを判定する</summary>
-        private bool IsTextOverflowing()
+        private bool IsTextOverflowing(int overLine = 0)
         {
             // テキストの再構築
             _tmpText.ForceMeshUpdate();
             // テキストの必要な高さとRectTransformの高さを比較
-            return _tmpText.preferredHeight > _tmpText.rectTransform.rect.height;
+            return _tmpText.preferredHeight > _tmpText.rectTransform.rect.height + overLine;
         }
 
         /// <summary>リソース解放</summary>

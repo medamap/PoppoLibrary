@@ -8,7 +8,7 @@
         /// <summary>サービスノード優先順位</summary>
         public float Priority { get; }
         /// <summary>コンストラクタ</summary>
-        public CentralHubStatus(CentralHubStatusPhase phase, float priority)
+        private CentralHubStatus(CentralHubStatusPhase phase, float priority)
         {
             Phase = phase;
             Priority = priority;

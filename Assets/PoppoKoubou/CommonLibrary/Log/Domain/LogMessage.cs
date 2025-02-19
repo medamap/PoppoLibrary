@@ -1,4 +1,6 @@
-﻿namespace PoppoKoubou.CommonLibrary.Log.Domain
+﻿// ReSharper disable MemberCanBePrivate.Global
+namespace PoppoKoubou.CommonLibrary.Log.Domain
+
 {
     /// <summary>ログメッセージ</summary>
     public struct LogMessage
@@ -12,7 +14,7 @@
         /// <summary>オプションのプライマリカラー、設定されていれば、こちらが優先される</summary>
         public string PrimaryColor { get; }
         /// <summary>コンストラクタ</summary>
-        private LogMessage(LogType type, LogLevel level, string message, string primaryColor = null)
+        public LogMessage(LogType type, LogLevel level, string message, string primaryColor = null)
         {
             Type = type;
             Level = level;

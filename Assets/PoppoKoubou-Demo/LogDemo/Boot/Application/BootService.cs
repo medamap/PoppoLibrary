@@ -6,6 +6,7 @@ using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.AggregateService.Infrastructure;
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using UnityEngine;
+using VContainer;
 
 namespace PoppoKoubou_Demo.LogDemo.Boot.Application
 {
@@ -15,7 +16,7 @@ namespace PoppoKoubou_Demo.LogDemo.Boot.Application
     {
 
         /// <summary>依存注入</summary>
-        public BootService(
+        [Inject] public BootService(
             IPublisher<LogMessage> logPublisher,
             ISubscriber<CentralHubStatus> centralHubStatusSubscriber,
             IPublisher<ServiceNodeStatus> serviceNodeStatusPublisher)
