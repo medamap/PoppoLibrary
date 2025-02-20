@@ -1,0 +1,10 @@
+{
+  "name": "jp.megamin.poppokoubou.library.demo",
+  "displayName": "PoppoKoubou-Library-Demo",
+  "version": "1.0.5",
+  "unity": "6000.0",
+  "description": "PoppoKoubou-Library-Demo",
+  "author": {
+    "name": "Medamap"
+  }
+}
