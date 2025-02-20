@@ -7,13 +7,6 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
-    "com.cysharp.messagepipe.interprocess": {
-      "version": "1.8.1",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://package.openupm.com"
-    },
     "com.cysharp.messagepipe.vcontainer": {
       "version": "1.8.1",
       "depth": 0,
@@ -267,6 +260,13 @@
       "dependencies": {},
       "hash": "5e6f5cc14b6dc8b94251bf6c0d6c37025a6ecf77"
     },
+    "jp.megamin.messagepipe.interprocess": {
+      "version": "https://github.com/medamap/MessagePipe.git?path=src/MessagePipe.Interprocess#feature/android_interprocess",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "034f8ca553cff1bddd4baeac174ee73c77584ff2"
+    },
     "org.nuget.messagepack": {
       "version": "3.1.3",
       "depth": 0,
@@ -347,7 +347,7 @@
       "url": "https://unitynuget-registry.azurewebsites.net"
     },
     "org.nuget.r3": {
-      "version": "1.2.9",
+      "version": "1.3.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {

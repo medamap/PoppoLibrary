@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="jp.megamin.UdpBroadcastDemo">
+
+    <application
+            android:networkSecurityConfig="@xml/network_security_config"
+            android:usesCleartextTraffic="true">
+        <!--Used when Application Entry is set to Activity, otherwise remove this activity block-->
+        <activity android:name="com.unity3d.player.UnityPlayerActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+        </activity>
+        <!--Used when Application Entry is set to GameActivity, otherwise remove this activity block-->
+        <activity android:name="com.unity3d.player.UnityPlayerGameActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+            <meta-data android:name="android.app.lib_name" android:value="game" />
+        </activity>
+    </application>
+    <!-- 基本的なネットワークパーミッション -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 追加のネットワークパーミッション -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+</manifest>

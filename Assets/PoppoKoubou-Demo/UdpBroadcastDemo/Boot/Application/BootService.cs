@@ -12,6 +12,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using VContainer;
 using VContainer.Unity;
+using MessagePack;
+using MessagePack.Formatters;
+using MessagePack.Resolvers;
 
 namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
 {
@@ -57,9 +60,23 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
                 // UnityWebRequest でgoogleにリクエストする
                 var request = UnityWebRequest.Get ("http://www.google.com");
 
-                // UDP メッセージ送受信用を設定
+                var resolver = CompositeResolver.Create(
+                    new IMessagePackFormatter[] { new UdpMessageFormatter() },
+                    new IFormatterResolver[] { ContractlessStandardResolver.Instance }
+                );
+                var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
+                
+                // UDP メッセージ送受信用のオプションを設定（ここで MessagePackSerializerOptions を上書き）
                 var udpOptions = builder.ToMessagePipeBuilder()
-                    .AddUdpInterprocess(_networkInfoContainer.NetworkInfo.BroadcastAddress, 37893, _ => { });
+                    .AddUdpInterprocessWithSubnet(
+                        _networkInfoContainer.NetworkInfo.BroadcastAddress,
+                        37893,
+                        _networkInfoContainer.NetworkInfo.SubnetMask,
+                        _networkInfoContainer.NetworkInfo.NetworkAddress,
+                        opt => {
+                        opt.MessagePackSerializerOptions = options;
+                    });
+
                 builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UdpMessage>(udpOptions);
                 
                 //// UDP Communication //////////////////////////////////////////////////

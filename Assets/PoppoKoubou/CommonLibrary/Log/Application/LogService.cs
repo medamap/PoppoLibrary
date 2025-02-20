@@ -37,9 +37,9 @@ namespace PoppoKoubou.CommonLibrary.Log.Application
         protected override async UniTask StartInitialize(CancellationToken ct)
         {
             Debug.Log($"LogService.StartInitialize()");
-            LogPublisher.Publish(LogMessage.AddLine($"LogService.StartInitialize()", LogLevel.Verbose));
             // ログプロバイダ初期化
             _logProvider.Initialize();
+            LogPublisher.Publish(LogMessage.AddLine($"LogService.StartInitialize()", LogLevel.Verbose));
             // 1ミリ秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct);
         }
