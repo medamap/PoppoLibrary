@@ -2,7 +2,9 @@
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using TMPro;
 using Cysharp.Text;
+using UnityEngine.UI;
 using VContainer;
+using LogType = PoppoKoubou.CommonLibrary.Log.Domain.LogType;
 
 namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
 {
@@ -38,8 +40,8 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         {
             switch (ev.Type)
             {
-                case LogType.AddLastLine: AddLastLineLog(_formatter.Format(ev)); break;
-                case LogType.ReplaceLastLine: ReplaceLastLineLog(_formatter.Format(ev)); break;
+                case LogType.AddLastLine: AddLastLineLog(_formatter.Format(ev), overLine); break;
+                case LogType.ReplaceLastLine: ReplaceLastLineLog(_formatter.Format(ev), overLine); break;
             }
         }
 
@@ -115,6 +117,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         {
             // テキストの再構築
             _tmpText.ForceMeshUpdate();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_tmpText.rectTransform);
             // テキストの必要な高さとRectTransformの高さを比較
             return _tmpText.preferredHeight > _tmpText.rectTransform.rect.height + overLine;
         }
