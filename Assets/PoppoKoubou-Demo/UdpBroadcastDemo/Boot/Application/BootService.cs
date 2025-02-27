@@ -3,7 +3,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using MessagePipe;
 using PoppoKoubou_Demo.UdpBroadcastDemo.LifetimeScope;
-using PoppoKoubou_Demo.UdpBroadcastDemo.UdpCommunication.Domain;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.AggregateService.Infrastructure;
 using PoppoKoubou.CommonLibrary.Log.Domain;
@@ -15,6 +14,8 @@ using VContainer.Unity;
 using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
+using PoppoKoubou.CommonLibrary.MessagePipe;
+using PoppoKoubou.CommonLibrary.UI.Domain;
 
 namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
 {
@@ -57,13 +58,7 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
             {
                 //// UDP Interprocess //////////////////////////////////////////////////
 
-                // UnityWebRequest でgoogleにリクエストする
-                var request = UnityWebRequest.Get ("http://www.google.com");
-
-                var resolver = CompositeResolver.Create(
-                    new IMessagePackFormatter[] { new UdpMessageFormatter() },
-                    new IFormatterResolver[] { ContractlessStandardResolver.Instance }
-                );
+                var resolver = builder.CreatePoppoKoubouCompositeResolver();
                 var options = MessagePackSerializerOptions.Standard.WithResolver(resolver);
                 
                 // UDP メッセージ送受信用のオプションを設定（ここで MessagePackSerializerOptions を上書き）
@@ -76,8 +71,14 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
                         opt => {
                         opt.MessagePackSerializerOptions = options;
                     });
-
+                
+                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, CentralHubStatus>(udpOptions);
+                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, ServiceNodeInfo>(udpOptions);
+                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, LogMessage>(udpOptions);
+                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, NetworkInfo>(udpOptions);
                 builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UdpMessage>(udpOptions);
+                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, InteractUI>(udpOptions);
+                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UpdateUI>(udpOptions);
                 
                 //// UDP Communication //////////////////////////////////////////////////
 

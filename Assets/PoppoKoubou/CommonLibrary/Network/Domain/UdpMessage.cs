@@ -1,14 +1,12 @@
-﻿using MessagePack;
+﻿using System;
+using MessagePack;
 using MessagePack.Formatters;
-using System;
 
-namespace PoppoKoubou_Demo.UdpBroadcastDemo.UdpCommunication.Domain
+namespace PoppoKoubou.CommonLibrary.Network.Domain
 {
-    [MessagePackObject]
-    public class UdpMessage
+    [MessagePackObject] public class UdpMessage
     {
-        [Key(0)]
-        public readonly string Text;
+        [Key(0)] public readonly string Text;
         public UdpMessage(string text) => Text = text;
         public static UdpMessage Create(string text) => new UdpMessage(text);
     }
