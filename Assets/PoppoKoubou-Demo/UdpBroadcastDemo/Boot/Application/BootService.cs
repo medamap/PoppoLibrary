@@ -71,14 +71,9 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
                         opt => {
                         opt.MessagePackSerializerOptions = options;
                     });
-                
-                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, CentralHubStatus>(udpOptions);
-                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, ServiceNodeInfo>(udpOptions);
-                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, LogMessage>(udpOptions);
-                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, NetworkInfo>(udpOptions);
-                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UdpMessage>(udpOptions);
-                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, InteractUI>(udpOptions);
-                builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UpdateUI>(udpOptions);
+
+                // UDP メッセージブローカー登録
+                builder.RegisterPoppoKoubouInterprocessMessageBroker(udpOptions);
                 
                 //// UDP Communication //////////////////////////////////////////////////
 

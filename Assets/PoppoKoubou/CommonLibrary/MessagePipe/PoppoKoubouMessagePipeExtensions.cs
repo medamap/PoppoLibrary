@@ -1,6 +1,8 @@
 ﻿using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
+using MessagePipe;
+using MessagePipe.Interprocess;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using PoppoKoubou.CommonLibrary.Network.Domain;
@@ -48,6 +50,18 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
                 combinedFormatters,
                 new IFormatterResolver[] { ContractlessStandardResolver.Instance }
             );
+        }
+
+        /// <summary>ぽっぽライブラリのカスタムメッセージブローカを登録</summary>
+        public static void RegisterPoppoKoubouInterprocessMessageBroker(this IContainerBuilder builder, MessagePipeInterprocessOptions options)
+        {
+            builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, CentralHubStatus>(options);
+            builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, ServiceNodeInfo>(options);
+            builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, LogMessage>(options);
+            builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, NetworkInfo>(options);
+            builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UdpMessage>(options);
+            builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, InteractUI>(options);
+            builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UpdateUI>(options);
         }
     }
 }
