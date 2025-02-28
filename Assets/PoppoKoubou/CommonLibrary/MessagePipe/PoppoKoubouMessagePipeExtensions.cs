@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using System.Collections.Generic;
+using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
 using MessagePipe;
@@ -19,10 +20,10 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
         /// <param name="builder">IContainerBuilder インスタンス</param>
         /// <param name="additionalFormatters">追加のカスタムフォーマッター</param>
         /// <returns>CompositeResolver</returns>
-        public static IFormatterResolver CreatePoppoKoubouCompositeResolver(this IContainerBuilder builder, params IMessagePackFormatter[] additionalFormatters)
+        public static IFormatterResolver CreatePoppoKoubouCompositeResolver(this IContainerBuilder builder, IMessagePackFormatter[] additionalFormatters = null)
         {
             // 既定のカスタムフォーマッター群
-            IMessagePackFormatter[] fixedFormatters =
+            var fixedFormatters = new List<IMessagePackFormatter>()
             {
                 new CentralHubStatusFormatter(),
                 new ServiceNodeInfoFormatter(),
@@ -32,22 +33,14 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
                 new InteractUIFormatter(),
                 new UpdateUIFormatter(),
             };
-
             // 固定フォーマッターと追加フォーマッターを結合
-            IMessagePackFormatter[] combinedFormatters;
             if (additionalFormatters is { Length: > 0 })
             {
-                combinedFormatters = new IMessagePackFormatter[fixedFormatters.Length + additionalFormatters.Length];
-                fixedFormatters.CopyTo(combinedFormatters, 0);
-                additionalFormatters.CopyTo(combinedFormatters, fixedFormatters.Length);
-            }
-            else
-            {
-                combinedFormatters = fixedFormatters;
+                fixedFormatters.AddRange(additionalFormatters);
             }
 
             return CompositeResolver.Create(
-                combinedFormatters,
+                fixedFormatters.ToArray(),
                 new IFormatterResolver[] { ContractlessStandardResolver.Instance }
             );
         }
