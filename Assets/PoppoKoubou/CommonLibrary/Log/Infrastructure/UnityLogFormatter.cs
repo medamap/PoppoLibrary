@@ -1,4 +1,5 @@
-﻿using PoppoKoubou.CommonLibrary.Log.Domain;
+﻿using System.Text;
+using PoppoKoubou.CommonLibrary.Log.Domain;
 
 namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
 {
@@ -13,7 +14,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
                 : GetDefaultColorForLevel(message.Level);
 
             // 出力先が Unity の場合、<color> タグで色指定可能
-            return $"<color={color}>{message.Message}</color>";
+            return $"<color={color}>{Encoding.UTF8.GetString(Encoding.UTF8.GetBytes(message.Message))}</color>";
         }
 
         private string GetDefaultColorForLevel(LogLevel level)
