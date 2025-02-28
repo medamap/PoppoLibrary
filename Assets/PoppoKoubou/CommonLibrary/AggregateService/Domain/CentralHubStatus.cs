@@ -4,18 +4,13 @@ using MessagePack.Formatters;
 
 namespace PoppoKoubou.CommonLibrary.AggregateService.Domain
 {
-    /// <summary>
-    /// サービス集約ハブステータス
-    /// </summary>
-    [MessagePackObject]
-    public struct CentralHubStatus
+    /// <summary>サービス集約ハブステータス</summary>
+    [MessagePackObject] public struct CentralHubStatus
     {
         /// <summary>フェイズ</summary>
-        [Key(0)]
-        public CentralHubStatusPhase Phase { get; }
+        [Key(0)] public CentralHubStatusPhase Phase { get; }
         /// <summary>サービスノード優先順位</summary>
-        [Key(1)]
-        public float Priority { get; }
+        [Key(1)] public float Priority { get; }
 
         /// <summary>コンストラクタ</summary>
         public CentralHubStatus(CentralHubStatusPhase phase, float priority)

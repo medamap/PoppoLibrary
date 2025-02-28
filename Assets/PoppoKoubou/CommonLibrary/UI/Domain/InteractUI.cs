@@ -6,9 +6,7 @@ using UnityEngine.UI;
 
 namespace PoppoKoubou.CommonLibrary.UI.Domain
 {
-    /// <summary>
-    /// UIインタラクトメッセージ
-    /// </summary>
+    /// <summary>UIインタラクトメッセージ</summary>
     [MessagePackObject] public struct InteractUI
     {
         [Key(0)] public InteractUIType Type { get; }

@@ -13,7 +13,7 @@ namespace PoppoKoubou.CommonLibrary.Network.Domain
         [Key(3)] public string NetworkAddress { get; }
         [Key(4)] public string BroadcastAddress { get; }
         [Key(5)] public readonly List<string> LOG = new List<string>();
-        public bool IsError => LOG.Count > 0;
+        [IgnoreMember] public bool IsError => LOG.Count > 0;
         
         public NetworkInfo(string localIPAddress, string defaultGateway, string subnetMask, string networkAddress, string broadcastAddress)
         {

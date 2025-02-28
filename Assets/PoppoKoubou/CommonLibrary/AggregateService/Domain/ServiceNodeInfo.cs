@@ -8,18 +8,14 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Domain
     /// <summary>
     /// サービスノード情報
     /// </summary>
-    [MessagePackObject]
-    public struct ServiceNodeInfo
+    [MessagePackObject] public struct ServiceNodeInfo
     {
         /// <summary>GUID</summary>
-        [Key(0)]
-        public Guid Guid { get; }
+        [Key(0)] public Guid Guid { get; }
         /// <summary>サービスノード名</summary>
-        [Key(1)]
-        public string Name { get; }
+        [Key(1)] public string Name { get; }
         /// <summary>実行優先順位（小さいほど優先度が高い）</summary>
-        [Key(2)]
-        public int Priority { get; }
+        [Key(2)] public int Priority { get; }
         
         /// <summary>コンストラクタ</summary>
         public ServiceNodeInfo(string name, int priority)
