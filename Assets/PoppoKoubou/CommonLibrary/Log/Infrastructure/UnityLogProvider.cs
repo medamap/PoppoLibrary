@@ -1,5 +1,6 @@
 ﻿using System;
 using MessagePipe;
+using PoppoKoubou.CommonLibrary.Log.Application;
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using UnityEngine;
 using VContainer;
@@ -9,6 +10,8 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
     /// <summary>Unityログ処理プロバイダ</summary>
     public class UnityLogProvider : ILogProvider
     {
+        /// <summary>ログAPI</summary>
+        private readonly LogApi _logApi;
         /// <summary>ログを受信するためのサブスクライバー</summary>
         private readonly ISubscriber<LogMessage> _logSubscriber;
         private IDisposable _disposable;
@@ -17,10 +20,12 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         
         /// <summary>依存注入</summary>
         [Inject] public UnityLogProvider(
+            LogApi logApi,
             ISubscriber<LogMessage> logSubscriber,
             ILogFormatter formatter)
         {
             Debug.Log($"UnityLogProvider.UnityLogProvider()");
+            _logApi = logApi;
             _logSubscriber = logSubscriber;
             _formatter = formatter;
         }
@@ -31,7 +36,9 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
             Debug.Log($"UnityLogProvider.Initialize()");
             // ログを受信したらコンソールに出力する
             var disposables = DisposableBag.CreateBuilder();
-            _logSubscriber.Subscribe(x => Debug.Log(_formatter.Format(x))).AddTo(disposables);
+            _logSubscriber.Subscribe(
+                x => Debug.Log(_formatter.Format(x)),
+                x => _logApi.IsEnabledLogLevel(x)).AddTo(disposables);
             _disposable = disposables.Build();
         }
 

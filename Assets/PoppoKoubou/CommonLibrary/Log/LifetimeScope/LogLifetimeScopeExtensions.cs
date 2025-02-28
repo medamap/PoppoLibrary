@@ -17,6 +17,8 @@ namespace PoppoKoubou.CommonLibrary.Log.LifetimeScope
             builder.Register<ILogFormatter, UnityLogFormatter>(Lifetime.Singleton);
             builder.Register<ILogOperator, TextMeshProUguiLogOperator>(Lifetime.Transient);
             builder.Register<ILogProvider, UnityLogProvider>(Lifetime.Singleton);
+            builder.Register<LogSettings>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<LogApi>(Lifetime.Singleton);
         }
         public static void AddLogEntryPoint(this VContainer.Unity.LifetimeScope lifetimeScope, IContainerBuilder builder) {
             builder.RegisterEntryPoint<LogService>();

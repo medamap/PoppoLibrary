@@ -5,6 +5,7 @@ using MessagePipe;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.AggregateService.Infrastructure;
 using PoppoKoubou.CommonLibrary.Log.Domain;
+using PoppoKoubou.CommonLibrary.Log.Infrastructure;
 using PoppoKoubou.CommonLibrary.UI.Domain;
 using UnityEngine;
 using VContainer;
@@ -39,8 +40,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Application
         /// <summary>サービス初期化</summary>
         protected override async UniTask StartInitialize(CancellationToken ct)
         {
-            Debug.Log($"UIService.StartInitialize()");
-            LogAddLine("UIService.StartInitialize()", "#00ffff");
+            LogPublisher.AddLine($"UIService.StartInitialize()", LogLevel.Debug, ServiceLogColor);
             // UIインタラクトディスパッチ初期化
             _interactUIDispatch.Initialize();
             // 1ミリ秒待機
@@ -50,8 +50,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Application
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            Debug.Log($"UIService.StartService()");
-            LogAddLine("UIService.StartService()", "#00ffff");
+            LogPublisher.AddLine($"UIService.StartService()", LogLevel.Debug, ServiceLogColor);
             // 1ミリ秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct);
         }
@@ -59,6 +58,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Application
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
+            LogPublisher.AddLine($"UIService.Dispose()", LogLevel.Debug, ServiceLogColor);
             _interactUIDispatch?.Dispose();
         }
     }

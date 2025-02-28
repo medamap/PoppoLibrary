@@ -5,6 +5,7 @@ using MessagePipe;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.AggregateService.Infrastructure;
 using PoppoKoubou.CommonLibrary.Log.Domain;
+using PoppoKoubou.CommonLibrary.Log.Infrastructure;
 using PoppoKoubou.CommonLibrary.Network.Domain;
 using UnityEngine;
 using VContainer;
@@ -45,29 +46,29 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.UdpCommunication.Application
         /// <summary>サービス初期化 </summary>
         protected override async UniTask StartInitialize(CancellationToken ct)
         {
-            LogAddLine($"UdpCommunicationService.StartInitialize()", ServiceLogColor);
+            LogPublisher.AddLine($"UdpCommunicationService.StartInitialize()", LogLevel.Debug, ServiceLogColor);
             // UDPメッセージ購読
-            LogAddLine("UDPメッセージ購読処理登録", "#40a0ff");
+            LogPublisher.AddLine("UDPメッセージ購読処理登録", LogLevel.Debug,"#40a0ff");
             _udpSubscriberDisposable = await _udpSubscriber.SubscribeAsync(
                 "BootService",
                 async message => {
                     await UniTask.SwitchToMainThread();
-                    LogAddLine($"UDPメッセージ受信: {message.Text}", ServiceLogColor);
+                    LogPublisher.AddLine($"UDPメッセージ受信: {message.Text}", LogLevel.Debug, ServiceLogColor);
                 },
                 cancellationToken: ct
             );
-            LogAddLine("UDPメッセージ購読処理登録完了の筈", "#40a0ff");
+            LogPublisher.AddLine("UDPメッセージ購読処理登録完了の筈", LogLevel.Debug, "#40a0ff");
         }
 
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            LogAddLine($"UdpCommunicationService.StartService()", ServiceLogColor);
+            LogPublisher.AddLine($"UdpCommunicationService.StartService()", LogLevel.Debug, ServiceLogColor);
             // 1秒おきにメッセージ送信（ctがキャンセルされるまで）
             while (!ct.IsCancellationRequested)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: ct);
-                LogAddLine("UDPメッセージ送信");
+                LogPublisher.AddLine("UDPメッセージ送信", LogLevel.Debug, ServiceLogColor);
                 await _udpPublisher.PublishAsync("BootService", UdpMessage.Create($"Hello I'm {_networkInfoContainer.NetworkInfo.LocalIPAddress} !!"), ct);
             }
         }
@@ -75,7 +76,7 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.UdpCommunication.Application
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
-            LogAddLine($"UdpCommunicationService.Dispose()", ServiceLogColor);
+            LogPublisher.AddLine($"UdpCommunicationService.Dispose()", LogLevel.Debug, ServiceLogColor);
             _udpSubscriberDisposable?.DisposeAsync().Forget();
         }
     }

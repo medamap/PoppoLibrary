@@ -47,7 +47,7 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
             // 初期ウェイト
             await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
             Debug.Log("CentralHub.StartAsync()");
-            _logPublisher.AddLine("サービス集約ハブ起動", LogLevel.Info, _color);
+            _logPublisher.AddLine("サービス集約ハブ起動", LogLevel.Debug, _color);
             await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
 
             // 登録バッチ用のサービスリスト（ループ全体で保持し、後で Clear する）
@@ -88,7 +88,7 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
             {
                 // サービス登録開始フェイズ
                 _centralHubStatusPublisher.Publish(CentralHubStatus.WaitingRegistrationServiceNode());
-                _logPublisher.AddLine("サービスノード登録開始", LogLevel.Info, _color);
+                _logPublisher.AddLine("サービスノード登録開始", LogLevel.Debug, _color);
 
                 // 最初の１件目の登録を待機
                 var firstEvent = await _serviceNodeStatusSubscriber.FirstAsync(
@@ -158,7 +158,7 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
                     while (count < initBatchServices[priority].Count)
                     {
                         await UniTask.Delay(TimeSpan.FromMilliseconds(1000), cancellationToken: ct);
-                        _logPublisher.AddLine($"Check {count} / {initBatchServices[priority].Count}", LogLevel.Info, "#ff3030");
+                        _logPublisher.AddLine($"Check {count} / {initBatchServices[priority].Count}", LogLevel.Debug, "#ff3030");
                     }
                     initDisposable.Dispose();
                     _logPublisher.AddLine($"サービスノード初期化完了 (優先順位: {priority})", LogLevel.Info, _color);

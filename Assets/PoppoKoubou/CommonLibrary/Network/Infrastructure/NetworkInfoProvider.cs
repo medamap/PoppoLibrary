@@ -8,14 +8,14 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using VContainer;
 
+// ReSharper disable once ClassNeverInstantiated.Global
+
 namespace PoppoKoubou.CommonLibrary.Network.Infrastructure
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
     public class NetworkInfoProvider : INetworkInfoProvider
     {
         /// <summary>依存注入</summary>
-        [Inject]
-        public NetworkInfoProvider() { }
+        [Inject] public NetworkInfoProvider() { }
         
         /// <summary>非同期ネットワーク情報取得</summary>
         public async UniTask<NetworkInfo> GetNetworkInfoAsync(CancellationToken token)

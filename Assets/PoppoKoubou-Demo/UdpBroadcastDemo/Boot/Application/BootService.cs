@@ -14,6 +14,8 @@ using VContainer.Unity;
 using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
+using PoppoKoubou.CommonLibrary.Log.Application;
+using PoppoKoubou.CommonLibrary.Log.Infrastructure;
 using PoppoKoubou.CommonLibrary.MessagePipe;
 using PoppoKoubou.CommonLibrary.UI.Domain;
 
@@ -23,9 +25,10 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
     // ReSharper disable once ClassNeverInstantiated.Global
     public class BootService : ServiceNode
     {
+        /// <summary>ログAPI</summary>
+        private readonly LogApi _logApi;
         /// <summary>ネットワークサービスコンテナ</summary>
         private readonly INetworkInfoContainer _networkInfoContainer;
-
         /// <summary>UDPブロードキャストライフタイムスコープ</summary>
         private readonly UdpBroadcastLifetimeScope _lifetimeScope;
         
@@ -34,8 +37,9 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
             IPublisher<LogMessage> logPublisher,
             ISubscriber<CentralHubStatus> centralHubStatusSubscriber,
             IPublisher<ServiceNodeStatus> serviceNodeStatusPublisher,
-            UdpBroadcastLifetimeScope lifetimeScope,
-            INetworkInfoContainer networkInfoContainer)
+            LogApi logApi,
+            INetworkInfoContainer networkInfoContainer,
+            UdpBroadcastLifetimeScope lifetimeScope)
             : base(
                 "UdpBroadcastDemo ブートサービス",
                 110,
@@ -44,8 +48,10 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
                 serviceNodeStatusPublisher)
         {
             Debug.Log($"UdpBroadcastDemo.Boot.Application.BootService.BootService()");
-            _lifetimeScope = lifetimeScope;
+            _logApi = logApi;
             _networkInfoContainer = networkInfoContainer;
+            _lifetimeScope = lifetimeScope;
+            _logApi.UpdateLogLevel(LogLevel.All);
         }
 
         /// <summary>サービス初期化</summary>
@@ -86,14 +92,14 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            LogAddLine($"UdpBroadcastDemo.Boot.Application.BootService.StartService()", ServiceLogColor);
+            LogPublisher.AddLine($"UdpBroadcastDemo.Boot.Application.BootService.StartService()", LogLevel.Debug, ServiceLogColor);
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct); // 1ミリ秒待機
         }
         
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
-            LogAddLine($"UdpBroadcastDemo.Boot.Application.BootService.Dispose()", ServiceLogColor);
+            LogPublisher.AddLine($"UdpBroadcastDemo.Boot.Application.BootService.Dispose()", LogLevel.Debug, ServiceLogColor);
         }
     }
 }

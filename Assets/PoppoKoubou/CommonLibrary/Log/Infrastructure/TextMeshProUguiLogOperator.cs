@@ -2,6 +2,7 @@
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using TMPro;
 using Cysharp.Text;
+using PoppoKoubou.CommonLibrary.Log.Application;
 using UnityEngine.UI;
 using VContainer;
 using LogType = PoppoKoubou.CommonLibrary.Log.Domain.LogType;
@@ -12,18 +13,23 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
     // ReSharper disable once ClassNeverInstantiated.Global
     public class TextMeshProUguiLogOperator : ILogOperator
     {
+        /// <summary>ログAPI</summary>
+        private readonly LogApi _logApi;
+        /// <summary>ログフォーマッタ</summary>
+        private readonly ILogFormatter _formatter;
+
         /// <summary>TextMeshProUGUI</summary>
         private TextMeshProUGUI _tmpText;
 
         /// <summary>Stringビルダー</summary>
         private Utf16ValueStringBuilder _sb;
         
-        /// <summary>ログフォーマッタ</summary>
-        private ILogFormatter _formatter;
-        
         /// <summary>依存注入</summary>
-        [Inject] public TextMeshProUguiLogOperator(ILogFormatter formatter)
+        [Inject] public TextMeshProUguiLogOperator(
+            LogApi logApi,
+            ILogFormatter formatter)
         {
+            _logApi = logApi;
             _formatter = formatter;
         }
         
@@ -38,6 +44,9 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         /// <summary>イベントログを処理する</summary>
         public void OnLogEvent(LogMessage ev, int overLine = 0)
         {
+            // ログレベルが有効でないなら何もしない
+            if (!_logApi.IsEnabledLogLevel(ev)) return;
+            // ログタイプによって処理を分岐
             switch (ev.Type)
             {
                 case LogType.AddLastLine: AddLastLineLog(_formatter.Format(ev), overLine); break;

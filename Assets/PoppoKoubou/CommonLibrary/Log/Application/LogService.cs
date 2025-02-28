@@ -36,10 +36,9 @@ namespace PoppoKoubou.CommonLibrary.Log.Application
         /// <summary>サービス初期化</summary>
         protected override async UniTask StartInitialize(CancellationToken ct)
         {
-            Debug.Log($"LogService.StartInitialize()");
             // ログプロバイダ初期化
             _logProvider.Initialize();
-            LogPublisher.Publish(LogMessage.AddLine($"LogService.StartInitialize()", LogLevel.Verbose));
+            LogPublisher.Publish(LogMessage.AddLine($"LogService.StartInitialize()", LogLevel.Debug));
             // 1ミリ秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct);
         }
@@ -47,8 +46,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Application
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            Debug.Log($"LogService.StartService()");
-            LogPublisher.Publish(LogMessage.AddLine($"LogService.StartService()", LogLevel.Verbose));
+            LogPublisher.Publish(LogMessage.AddLine($"LogService.StartService()", LogLevel.Debug));
             // 1ミリ秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct);
         }
@@ -56,7 +54,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Application
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
-            Debug.Log($"LogService.Dispose()");
+            LogPublisher.Publish(LogMessage.AddLine($"LogService.Dispose()", LogLevel.Debug));
             _logProvider?.Dispose();
         }
     }
