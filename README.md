@@ -2,7 +2,6 @@
 [![GitHub release](https://img.shields.io/github/v/release/medamap/PoppoLibrary)](https://github.com/medamap/PoppoLibrary/releases)
 ![GitHub license](https://img.shields.io/github/license/medamap/PoppoLibrary)
 ![GitHub downloads](https://img.shields.io/github/downloads/medamap/PoppoLibrary/total)
-![GitHub Workflow Status](https://github.com/medamap/PoppoLibrary/actions/workflows/main.yml/badge.svg)
 
 ## 概要
 - Unity でドメイン駆動オニオンアーキテクチャスタイルで開発するためのライブラリなのである
