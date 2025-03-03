@@ -11,12 +11,12 @@ namespace PoppoKoubou.CommonLibrary.UI.LifetimeScope
     {
         public static void AddUIMessage(this VContainer.Unity.LifetimeScope lifetimeScope, IContainerBuilder builder, MessagePipeOptions options)
         {
-            builder.RegisterMessageBroker<InteractUI>(options); // InteractUI をメッセージ登録
-            builder.RegisterMessageBroker<UpdateUI>(options); // UpdateUI をメッセージ登録
+            builder.RegisterMessageBroker<InteractUI>(options);
+            builder.RegisterMessageBroker<UpdateUI>(options);
+            builder.RegisterMessageBroker<ClickUI>(options);
         }
         public static void AddUIComponent(this VContainer.Unity.LifetimeScope lifetimeScope, IContainerBuilder builder)
         {
-            // IInteractUIProvider　を InteractUIProvider として登録
             builder.Register<IInteractUIDispatch, InteractUIDispatch>(Lifetime.Singleton);
         }
         public static void AddUIEntryPoint(this VContainer.Unity.LifetimeScope lifetimeScope, IContainerBuilder builder)

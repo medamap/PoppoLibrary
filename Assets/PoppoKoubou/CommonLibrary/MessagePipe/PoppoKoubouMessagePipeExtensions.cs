@@ -31,6 +31,7 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
                 new NetworkInfoFormatter(),
                 new UdpMessageFormatter(),
                 new InteractUIFormatter(),
+                new ClickUIFormatter(),
                 new UpdateUIFormatter(),
             };
             // 固定フォーマッターと追加フォーマッターを結合
@@ -54,6 +55,7 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, NetworkInfo>(options);
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UdpMessage>(options);
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, InteractUI>(options);
+            builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, ClickUI>(options);
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UpdateUI>(options);
         }
     }
