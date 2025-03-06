@@ -74,6 +74,8 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.Boot.Application
                         37893,
                         _networkInfoContainer.NetworkInfo.SubnetMask,
                         _networkInfoContainer.NetworkInfo.NetworkAddress,
+                        true,
+                        true,
                         opt => {
                         opt.MessagePackSerializerOptions = options;
                     });
