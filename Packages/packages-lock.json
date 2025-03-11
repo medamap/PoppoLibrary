@@ -29,7 +29,7 @@
       "url": "https://package.openupm.com"
     },
     "com.unity.burst": {
-      "version": "1.8.19",
+      "version": "1.8.18",
       "depth": 3,
       "source": "registry",
       "dependencies": {
@@ -79,8 +79,8 @@
         "com.unity.ide.visualstudio": "2.0.22",
         "com.unity.ide.rider": "3.0.31",
         "com.unity.editorcoroutines": "1.0.0",
-        "com.unity.performance.profile-analyzer": "1.2.3",
-        "com.unity.test-framework": "1.4.6",
+        "com.unity.performance.profile-analyzer": "1.2.2",
+        "com.unity.test-framework": "1.4.5",
         "com.unity.testtools.codecoverage": "1.2.6"
       }
     },
@@ -125,7 +125,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.performance.profile-analyzer": {
-      "version": "1.2.3",
+      "version": "1.2.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -183,7 +183,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.shadergraph": {
-      "version": "17.0.3",
+      "version": "17.0.2",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
@@ -192,7 +192,7 @@
       }
     },
     "com.unity.test-framework": {
-      "version": "1.4.6",
+      "version": "1.4.5",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -265,7 +265,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "034f8ca553cff1bddd4baeac174ee73c77584ff2"
+      "hash": "e29b71ecc435640b2c42c80fd43490b618fae4d5"
     },
     "org.nuget.messagepack": {
       "version": "3.1.3",
