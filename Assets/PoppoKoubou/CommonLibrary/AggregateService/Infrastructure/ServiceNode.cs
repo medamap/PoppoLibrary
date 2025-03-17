@@ -7,6 +7,9 @@ using PoppoKoubou.CommonLibrary.Log.Domain;
 using PoppoKoubou.CommonLibrary.Log.Infrastructure;
 using VContainer;
 
+// ReSharper disable InconsistentNaming
+// ReSharper disable MemberCanBePrivate.Global
+
 namespace PoppoKoubou.CommonLibrary.AggregateService.Infrastructure
 {
     /// <summary>ノードサービス</summary>
@@ -49,38 +52,38 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Infrastructure
             // 0.1秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
             // サービスノード登録開始待ち
-            LogAddLine($"[{serviceNodeInfo.Name}] サービスノード登録開始待ち ({serviceNodeInfo.Priority})");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] サービスノード登録開始待ち ({serviceNodeInfo.Priority})");
             await _centralHubStatusSubscriber.FirstAsync(
                 ct,
                 ev => ev.Phase == CentralHubStatusPhase.WaitingRegistrationServiceNode);
             // 0.1秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
             // サービスノード登録
-            LogAddLine($"[{serviceNodeInfo.Name}] サービスノード登録 ({serviceNodeInfo.Priority})");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] サービスノード登録 ({serviceNodeInfo.Priority})");
             _serviceNodeStatusPublisher.Publish(ServiceNodeStatus.RegistrationServiceNode(serviceNodeInfo));
             // サービスノード初期化開始待ち
-            LogAddLine($"[{serviceNodeInfo.Name}] サービスノード初期化開始待ち ({serviceNodeInfo.Priority})");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] サービスノード初期化開始待ち ({serviceNodeInfo.Priority})");
             var status = await _centralHubStatusSubscriber.FirstAsync(
                 ct, 
                 ev => ev.Phase == CentralHubStatusPhase.WaitingInitializeServiceNode &&
                       ev.Priority >= serviceNodeInfo.Priority);
-            LogAddLine($"[{serviceNodeInfo.Name}] セントラルハブステータス {status.Phase} {status.Priority}", "#4080ff");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] セントラルハブステータス {status.Phase} {status.Priority}", "#4080ff");
             // サービスノード初期化開始
-            LogAddLine($"[{serviceNodeInfo.Name}] サービスノード初期化開始 ({serviceNodeInfo.Priority})");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] サービスノード初期化開始 ({serviceNodeInfo.Priority})");
             _serviceNodeStatusPublisher.Publish(ServiceNodeStatus.StartInitializeServiceNode(serviceNodeInfo));
             // サービス初期化
-            LogAddLine($"[{serviceNodeInfo.Name}] サービス初期化 ({serviceNodeInfo.Priority})");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] サービス初期化 ({serviceNodeInfo.Priority})");
             await StartInitialize(ct);
             // サービスノード初期化完了
-            LogAddLine($"[{serviceNodeInfo.Name}] サービスノード初期化完了 ({serviceNodeInfo.Priority})");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] サービスノード初期化完了 ({serviceNodeInfo.Priority})");
             _serviceNodeStatusPublisher.Publish(ServiceNodeStatus.CompleteInitializeServiceNode(serviceNodeInfo));
             // サービスノード開始許可待ち
-            LogAddLine($"[{serviceNodeInfo.Name}] サービスノード開始許可待ち");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] サービスノード開始許可待ち");
             await _centralHubStatusSubscriber.FirstAsync(
                 ct,
                 ev => ev.Phase == CentralHubStatusPhase.AllowStartServiceNode);
             // サービスノード開始
-            LogAddLine($"[{serviceNodeInfo.Name}] サービスノード開始");
+            LogPublisher.Info($"[{serviceNodeInfo.Name}] サービスノード開始");
             _serviceNodeStatusPublisher.Publish(ServiceNodeStatus.StartServiceNode(serviceNodeInfo));
             // サービス開始
             await StartService(ct);
@@ -93,29 +96,22 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Infrastructure
         protected abstract UniTask StartService(CancellationToken ct);
 
         /// <summary>ログ追加</summary>
-        protected void LogAddLine(string log, string color = null)
-        {
-            LogPublisher.AddLine($"{log}", LogLevel.Info, string.IsNullOrEmpty(color) ? LogColor : color);
-        }
+        [Obsolete] protected void LogAddLine(string log, string color = null) =>
+            LogPublisher.Info($"{log}", string.IsNullOrEmpty(color) ? LogColor : color);
 
         /// <summary>エラー追加</summary>
-        protected void ErrorAddLine(string log, string color = null)
-        {
-            LogPublisher.AddLine($"{log}", LogLevel.Error, string.IsNullOrEmpty(color) ? LogColor : color);
-        }
+        [Obsolete] protected void ErrorAddLine(string log, string color = null) =>
+            LogPublisher.Error($"{log}", string.IsNullOrEmpty(color) ? LogColor : color);
 
         /// <summary>警告追加</summary>
-        protected void WarningAddLine(string log, string color = null)
-        {
-            LogPublisher.AddLine($"{log}", LogLevel.Warning, string.IsNullOrEmpty(color) ? LogColor : color);
-        }
+        [Obsolete] protected void WarningAddLine(string log, string color = null) =>
+            LogPublisher.Warning($"{log}", string.IsNullOrEmpty(color) ? LogColor : color);
 
         /// <summary>ログ更新</summary>
-        protected void LogReplaceLine(string log, string color = null)
-        {
-            LogPublisher.ReplaceLine($"{log}", LogLevel.Info, string.IsNullOrEmpty(color) ? LogColor : color);
-        }
+        [Obsolete] protected void LogReplaceLine(string log, string color = null) =>
+            LogPublisher.RInfo($"{log}", string.IsNullOrEmpty(color) ? LogColor : color);
 
+        /// <summary>リソース開放</summary>
         public abstract void Dispose();
     }
 }

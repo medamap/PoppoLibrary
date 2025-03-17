@@ -1,6 +1,7 @@
 ﻿using System;
 using MessagePipe;
 using PoppoKoubou.CommonLibrary.Log.Domain;
+using PoppoKoubou.CommonLibrary.Log.Infrastructure;
 using PoppoKoubou.CommonLibrary.UI.Domain;
 using UnityEngine;
 using VContainer;
@@ -22,21 +23,21 @@ namespace PoppoKoubou.CommonLibrary.UI.Infrastructure
             ISubscriber<InteractUI> interactUISubscriber,
             IPublisher<LogMessage> logPublisher)
         {
-            Debug.Log($"InteractUIProvider.InteractUIProvider()");
             _interactUISubscriber = interactUISubscriber;
             _logPublisher = logPublisher;
+            _logPublisher.Debug($"InteractUIProvider.InteractUIProvider()");
         }
         
         /// <summary>プロバイダ初期化</summary>
         public void Initialize()
         {
-            Debug.Log($"CarLineOperationProvider.Initialize()");
+            _logPublisher.Debug($"CarLineOperationProvider.Initialize()");
             // InteractUI受信用サブスクライバー登録
             var disposables = DisposableBag.CreateBuilder();
             _interactUISubscriber.Subscribe(ev =>
             {
                 // ログ送信
-                _logPublisher.Publish(LogMessage.AddLine($"InteractUI受信 ev={ev.Message}"));
+                _logPublisher.Debug($"InteractUI受信 ev={ev.Message}");
                 // メッセージをカンマで分割
                 var message = ev.Message.Split(',');
                 switch (message[0])
@@ -57,7 +58,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Infrastructure
         /// <summary>リソース解放</summary>
         public void Dispose()
         {
-            Debug.Log($"CarLineOperationProvider.Dispose()");
+            _logPublisher.Debug($"CarLineOperationProvider.Dispose()");
             _disposable?.Dispose();
             _disposable = null;
         }

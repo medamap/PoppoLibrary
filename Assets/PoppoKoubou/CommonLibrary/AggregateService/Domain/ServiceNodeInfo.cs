@@ -5,10 +5,8 @@ using MessagePack.Formatters;
 
 namespace PoppoKoubou.CommonLibrary.AggregateService.Domain
 {
-    /// <summary>
-    /// サービスノード情報
-    /// </summary>
-    [MessagePackObject] public struct ServiceNodeInfo
+    /// <summary>サービスノード情報</summary>
+    [MessagePackObject] public readonly struct ServiceNodeInfo : IEquatable<ServiceNodeInfo>
     {
         /// <summary>GUID</summary>
         [Key(0)] public Guid Guid { get; }
@@ -30,6 +28,21 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Domain
             Name = name;
             Priority = priority;
             Guid = guid;
+        }
+
+        public bool Equals(ServiceNodeInfo other)
+        {
+            return Guid.Equals(other.Guid) && Name == other.Name && Priority == other.Priority;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is ServiceNodeInfo other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Guid, Name, Priority);
         }
     }
 

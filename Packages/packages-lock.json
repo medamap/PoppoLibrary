@@ -261,11 +261,11 @@
       "hash": "5e6f5cc14b6dc8b94251bf6c0d6c37025a6ecf77"
     },
     "jp.megamin.messagepipe.interprocess": {
-      "version": "https://github.com/medamap/MessagePipe.git?path=src/MessagePipe.Interprocess#feature/android_interprocess",
+      "version": "https://github.com/medamap/MessagePipe.git?path=src/MessagePipe.Interprocess#1.8.1-extended.15",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e29b71ecc435640b2c42c80fd43490b618fae4d5"
+      "hash": "e5ae9e60e3433a9ea72e5f30ead6f77a74311b3f"
     },
     "org.nuget.messagepack": {
       "version": "3.1.3",

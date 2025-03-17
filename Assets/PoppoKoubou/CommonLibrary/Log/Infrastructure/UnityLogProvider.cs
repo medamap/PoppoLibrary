@@ -12,6 +12,8 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
     {
         /// <summary>ログAPI</summary>
         private readonly LogApi _logApi;
+        /// <summary>ログ出力</summary>
+        private readonly IPublisher<LogMessage> _logPublisher;
         /// <summary>ログを受信するためのサブスクライバー</summary>
         private readonly ISubscriber<LogMessage> _logSubscriber;
         private IDisposable _disposable;
@@ -21,31 +23,34 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         /// <summary>依存注入</summary>
         [Inject] public UnityLogProvider(
             LogApi logApi,
+            IPublisher<LogMessage> logPublisher,
             ISubscriber<LogMessage> logSubscriber,
             ILogFormatter formatter)
         {
-            Debug.Log($"UnityLogProvider.UnityLogProvider()");
             _logApi = logApi;
+            _logPublisher = logPublisher;
             _logSubscriber = logSubscriber;
             _formatter = formatter;
+            _logPublisher.Debug($"UnityLogProvider.UnityLogProvider()");
         }
         
         /// <summary>プロバイダ初期化</summary>
         public void Initialize()
         {
-            Debug.Log($"UnityLogProvider.Initialize()");
+            _logPublisher.Debug($"UnityLogProvider.Initialize()");
             // ログを受信したらコンソールに出力する
             var disposables = DisposableBag.CreateBuilder();
             _logSubscriber.Subscribe(
-                x => Debug.Log(_formatter.Format(x)),
-                x => _logApi.IsEnabledLogLevel(x)).AddTo(disposables);
+                logMessage => Debug.Log(_formatter.Format(logMessage)),
+                logMessage => _logApi.IsEnabledLogLevel(logMessage))
+                .AddTo(disposables);
             _disposable = disposables.Build();
         }
 
         /// <summary>リソース解放</summary>
         public void Dispose()
         {
-            Debug.Log($"UnityLogProvider.Dispose()");
+            _logPublisher.Debug($"UnityLogProvider.Dispose()");
             _disposable?.Dispose();
             _disposable = null;
         }

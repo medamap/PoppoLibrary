@@ -1,31 +1,41 @@
 ﻿using MessagePipe;
-using PoppoKoubou.CommonLibrary.AggregateService.LifetimeScope;
-using PoppoKoubou.CommonLibrary.Log.LifetimeScope;
-using UnityEngine;
+using PoppoKoubou_Demo.LogDemo.LogDemoBoot.LifetimeScope;
+using PoppoKoubou.CommonLibrary.Log.Domain;
+using PoppoKoubou.VContainerCustom.Presentation;
 using VContainer;
-using VContainer.Unity;
 
 namespace PoppoKoubou_Demo.LogDemo.LifetimeScope
 {
-    public class LogDemoLifetimeScope : VContainer.Unity.LifetimeScope
+    public class LogDemoLifetimeScope : LifetimeScopeBehaviour
     {
-        protected override void Configure(IContainerBuilder builder)
+        public MessagePipeOptions Options => MessagePipeOptions;
+
+        /// <summary>ライフタイムスコープ初期化</summary>
+        protected override void OnInitialize()
         {
-            Debug.Log($"LogDemoLifetimeScope.Configure()");
-            var options = builder.RegisterMessagePipe();
-
-            // メッセージ登録
-            this.AddAggregateServiceMessage(builder, options);
-            this.AddLogMessage(builder, options);
-
-            // コンポーネント登録
-            this.AddAggregateServiceComponent(builder);
-            this.AddLogComponent(builder);
-
-            // エントリポイント登録
-            this.AddAggregateServiceEntryPoint(builder);
-            this.AddLogEntryPoint(builder);
-            builder.RegisterEntryPoint<LogDemo.Boot.Application.BootService>();
+            AvailableServices = Services.Log | Services.UI;
+            GlobalLogSettings.LogLevel = LogLevel.All;
         }
+
+        /// <summary>メッセージ登録</summary>
+        protected override void OnRegisterMessage(IContainerBuilder builder, MessagePipeOptions options)
+        {
+            this.AddLogDemoBootMessage(builder, options);
+        }
+
+        /// <summary>コンポーネント登録</summary>
+        protected override void OnRegisterComponent(IContainerBuilder builder)
+        {
+            this.AddLogDemoBootComponent(builder);
+        }
+
+        /// <summary>エントリーポイント登録</summary>
+        protected override void OnRegisterEntryPoint(IContainerBuilder builder)
+        {
+            this.AddLogDemoBootEntryPoint(builder);
+        }
+
+        /// <summary>リソース開放</summary>
+        protected override void OnDispose() { }
     }
 }

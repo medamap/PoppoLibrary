@@ -7,7 +7,6 @@ using MessagePipe;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using PoppoKoubou.CommonLibrary.Log.Infrastructure;
-using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -33,10 +32,10 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
             IPublisher<CentralHubStatus> centralHubStatusPublisher,
             ISubscriber<ServiceNodeStatus> serviceNodeStatusSubscriber)
         {
-            Debug.Log("CentralHub.CentralHub()");
             _logPublisher = logPublisher;
             _centralHubStatusPublisher = centralHubStatusPublisher;
             _serviceNodeStatusSubscriber = serviceNodeStatusSubscriber;
+            _logPublisher.Debug("CentralHub.CentralHub()");
         }
 
         /// <summary>ログ用カラー</summary>
@@ -46,8 +45,8 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
         {
             // 初期ウェイト
             await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
-            Debug.Log("CentralHub.StartAsync()");
-            _logPublisher.AddLine("サービス集約ハブ起動", LogLevel.Debug, _color);
+            _logPublisher.Debug("CentralHub.StartAsync()");
+            _logPublisher.Debug("サービス集約ハブ起動", _color);
             await UniTask.Delay(TimeSpan.FromMilliseconds(100), cancellationToken: ct);
 
             // 登録バッチ用のサービスリスト（ループ全体で保持し、後で Clear する）
@@ -67,16 +66,12 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
                         // 重複チェック（永続購読側）
                         if (innerList.Contains(ev.ServiceNodeInfo))
                         {
-                            _logPublisher.AddLine(
-                                $"{ev.ServiceNodeInfo.Name} 登録済み（重複）(優先順位: {ev.ServiceNodeInfo.Priority})",
-                                LogLevel.Info, _color);
+                            _logPublisher.Info($"{ev.ServiceNodeInfo.Name} 登録済み（重複）(優先順位: {ev.ServiceNodeInfo.Priority})", _color);
                         }
                         else
                         {
                             innerList.Add(ev.ServiceNodeInfo);
-                            _logPublisher.AddLine(
-                                $"{ev.ServiceNodeInfo.Name} 継続登録完了 (優先順位: {ev.ServiceNodeInfo.Priority})",
-                                LogLevel.Info, _color);
+                            _logPublisher.Info($"{ev.ServiceNodeInfo.Name} 継続登録完了 (優先順位: {ev.ServiceNodeInfo.Priority})", _color);
                         }
                     }
                 },
@@ -88,7 +83,7 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
             {
                 // サービス登録開始フェイズ
                 _centralHubStatusPublisher.Publish(CentralHubStatus.WaitingRegistrationServiceNode());
-                _logPublisher.AddLine("サービスノード登録開始", LogLevel.Debug, _color);
+                _logPublisher.Info("サービスノード登録開始", _color);
 
                 // 最初の１件目の登録を待機
                 var firstEvent = await _serviceNodeStatusSubscriber.FirstAsync(
@@ -103,16 +98,12 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
                 }
                 if (list.Contains(firstEvent.ServiceNodeInfo))
                 {
-                    _logPublisher.AddLine(
-                        $"{firstEvent.ServiceNodeInfo.Name} 初回登録（重複）(優先順位: {firstEvent.ServiceNodeInfo.Priority})",
-                        LogLevel.Info, _color);
+                    _logPublisher.Info($"{firstEvent.ServiceNodeInfo.Name} 初回登録（重複）(優先順位: {firstEvent.ServiceNodeInfo.Priority})", _color);
                 }
                 else
                 {
                     list.Add(firstEvent.ServiceNodeInfo);
-                    _logPublisher.AddLine(
-                        $"{firstEvent.ServiceNodeInfo.Name} 初回登録完了 (優先順位: {firstEvent.ServiceNodeInfo.Priority})",
-                        LogLevel.Info, _color);
+                    _logPublisher.Info($"{firstEvent.ServiceNodeInfo.Name} 初回登録完了 (優先順位: {firstEvent.ServiceNodeInfo.Priority})", _color);
                 }
 
                 // 登録受付期間（例：1.5秒）を待機
@@ -136,37 +127,33 @@ namespace PoppoKoubou.CommonLibrary.AggregateService.Application
                         ev =>
                         {
                             // もし対象リストに含まれていればカウント
-                            if (initBatchServices[priority].Contains(ev.ServiceNodeInfo))
-                            {
-                                count++;
-                                _logPublisher.AddLine(
-                                    $"{ev.ServiceNodeInfo.Name} 初期化完了 (優先順位: {ev.ServiceNodeInfo.Priority}) {count} / {initBatchServices[priority].Count}",
-                                    LogLevel.Info, _color);
-                            }
+                            if (!initBatchServices[priority].Contains(ev.ServiceNodeInfo)) return;
+                            count++;
+                            _logPublisher.Info(
+                                $"{ev.ServiceNodeInfo.Name} 初期化完了 (優先順位: {ev.ServiceNodeInfo.Priority}) {count} / {initBatchServices[priority].Count}",
+                                _color);
                         },
                         ev => ev.Phase == ServiceNodeStatusPhase.CompleteInitializeServiceNode &&
                               ev.ServiceNodeInfo.Priority == priority &&
                               initBatchServices[priority].Contains(ev.ServiceNodeInfo)
                     );
 
-                    _logPublisher.AddLine(
-                        $"サービスノード初期化待ち (優先順位: {priority}) {initBatchServices[priority].Count} 件",
-                        LogLevel.Info, _color);
+                    _logPublisher.Info($"サービスノード初期化待ち (優先順位: {priority}) {initBatchServices[priority].Count} 件", _color);
                     _centralHubStatusPublisher.Publish(CentralHubStatus.WaitingInitializeServiceNode(priority));
 
                     // すべてのサービスの初期化完了を待機
                     while (count < initBatchServices[priority].Count)
                     {
                         await UniTask.Delay(TimeSpan.FromMilliseconds(1000), cancellationToken: ct);
-                        _logPublisher.AddLine($"Check {count} / {initBatchServices[priority].Count}", LogLevel.Debug, "#ff3030");
+                        _logPublisher.Debug($"Check {count} / {initBatchServices[priority].Count}", "#ff3030");
                     }
                     initDisposable.Dispose();
-                    _logPublisher.AddLine($"サービスノード初期化完了 (優先順位: {priority})", LogLevel.Info, _color);
+                    _logPublisher.Info($"サービスノード初期化完了 (優先順位: {priority})", _color);
                 }
 
                 // サービス開始許可フェイズ
                 _centralHubStatusPublisher.Publish(CentralHubStatus.AllowStartServiceNode());
-                _logPublisher.AddLine("サービスノード開始許可", LogLevel.Info, _color);
+                _logPublisher.Info("サービスノード開始許可", _color);
 
                 // ※次のバッチ開始までのウェイトが必要なら、ここで待機（例：短いDelayなど）
             }

@@ -73,8 +73,8 @@
 - 色々と他に依存しているパッケージも大量に含まれているからごめんしてね
 
 ```json
-    "jp.megamin.poppokoubou.library": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou#1.0.17",
-    "jp.megamin.poppokoubou.library.demo": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou-Demo#1.0.17",
+    "jp.megamin.poppokoubou.library": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou#1.0.19",
+    "jp.megamin.poppokoubou.library.demo": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou-Demo#1.0.19",
     "com.cysharp.messagepipe": "1.8.1",
     "com.cysharp.messagepipe.vcontainer": "1.8.1",
     "jp.megamin.messagepipe.interprocess": "https://github.com/medamap/MessagePipe.git?path=src/MessagePipe.Interprocess#feature/android_interprocess",
@@ -87,7 +87,7 @@
     "org.nuget.r3": "1.2.9",
 ```
 
-- そして manifest.json の後ろの部分に scopedRegistries を追記するがいい、手前の } のうしろにカンマを忘れないようにな
+- そして manifest.json の後ろの部分に scopedRegistries を追記するがいい、手前の `}` のうしろにカンマを忘れないようにな
 
 ```json
   "scopedRegistries": [

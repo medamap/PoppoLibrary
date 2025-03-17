@@ -16,10 +16,10 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.UdpCommunication.Application
     public class UdpCommunicationService : ServiceNode
     {
         private readonly INetworkInfoContainer _networkInfoContainer;
-        /// <summary>UDPメッセージパブリッシャー</summary>
-        private readonly IDistributedPublisher<string, UdpMessage> _udpPublisher;
-        /// <summary>UDPメッセージパブリッシャー</summary>
-        private readonly IDistributedSubscriber<string, UdpMessage> _udpSubscriber;
+        /// <summary>UDPメッセージ発行</summary>
+        private readonly IDistributedPublisher<string, UdpMessage> _udpMessagePublisher;
+        /// <summary>UDPメッセージ購読</summary>
+        private readonly IDistributedSubscriber<string, UdpMessage> _udpMessageSubscriber;
         IUniTaskAsyncDisposable _udpSubscriberDisposable;
 
         /// <summary>依存注入</summary>
@@ -28,8 +28,8 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.UdpCommunication.Application
             ISubscriber<CentralHubStatus> centralHubStatusSubscriber,
             IPublisher<ServiceNodeStatus> serviceNodeStatusPublisher,
             INetworkInfoContainer networkInfoContainer,
-            IDistributedPublisher<string, UdpMessage> udpPublisher,
-            IDistributedSubscriber<string, UdpMessage> udpSubscriber)
+            IDistributedPublisher<string, UdpMessage> udpMessagePublisher,
+            IDistributedSubscriber<string, UdpMessage> udpMessageSubscriber)
             : base(
                 "(Child) UDP通信サービス",
                 120,
@@ -37,46 +37,46 @@ namespace PoppoKoubou_Demo.UdpBroadcastDemo.UdpCommunication.Application
                 centralHubStatusSubscriber,
                 serviceNodeStatusPublisher)
         {
-            Debug.Log($"UdpCommunicationService.UdpCommunicationService()");
+            logPublisher.Debug($"UdpCommunicationService.UdpCommunicationService()");
             _networkInfoContainer = networkInfoContainer;
-            _udpPublisher = udpPublisher;
-            _udpSubscriber = udpSubscriber;
+            _udpMessagePublisher = udpMessagePublisher;
+            _udpMessageSubscriber = udpMessageSubscriber;
         }
 
         /// <summary>サービス初期化 </summary>
         protected override async UniTask StartInitialize(CancellationToken ct)
         {
-            LogPublisher.AddLine($"UdpCommunicationService.StartInitialize()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"UdpCommunicationService.StartInitialize()", ServiceLogColor);
             // UDPメッセージ購読
-            LogPublisher.AddLine("UDPメッセージ購読処理登録", LogLevel.Debug,"#40a0ff");
-            _udpSubscriberDisposable = await _udpSubscriber.SubscribeAsync(
+            LogPublisher.Debug("UDPメッセージ購読処理登録","#40a0ff");
+            _udpSubscriberDisposable = await _udpMessageSubscriber.SubscribeAsync(
                 "BootService",
                 async message => {
                     await UniTask.SwitchToMainThread();
-                    LogPublisher.AddLine($"UDPメッセージ受信: {message.Text}", LogLevel.Debug, ServiceLogColor);
+                    LogPublisher.Debug($"UDPメッセージ受信: {message.Text}", ServiceLogColor);
                 },
                 cancellationToken: ct
             );
-            LogPublisher.AddLine("UDPメッセージ購読処理登録完了の筈", LogLevel.Debug, "#40a0ff");
+            LogPublisher.Debug("UDPメッセージ購読処理登録完了の筈", "#40a0ff");
         }
 
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            LogPublisher.AddLine($"UdpCommunicationService.StartService()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"UdpCommunicationService.StartService()", ServiceLogColor);
             // 1秒おきにメッセージ送信（ctがキャンセルされるまで）
             while (!ct.IsCancellationRequested)
             {
                 await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: ct);
-                LogPublisher.AddLine("UDPメッセージ送信", LogLevel.Debug, ServiceLogColor);
-                await _udpPublisher.PublishAsync("BootService", UdpMessage.Create($"Hello I'm {_networkInfoContainer.NetworkInfo.LocalIPAddress} !!"), ct);
+                LogPublisher.Debug("UDPメッセージ送信", ServiceLogColor);
+                await _udpMessagePublisher.PublishAsync("BootService", UdpMessage.Create($"Hello I'm {_networkInfoContainer.NetworkInfo.LocalIPAddress} !!"), ct);
             }
         }
 
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
-            LogPublisher.AddLine($"UdpCommunicationService.Dispose()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"UdpCommunicationService.Dispose()", ServiceLogColor);
             _udpSubscriberDisposable?.DisposeAsync().Forget();
         }
     }

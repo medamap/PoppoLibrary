@@ -18,8 +18,8 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
         /// <summary>クリック時イベントメッセージ</summary>
         private IPublisher<InteractUI> _interactUIPublisher;
         private RectTransform _rectTransform;
-        private readonly Subject<Unit> _pointerUpSubject = new Subject<Unit>();
-        private readonly Subject<Vector2> _pointerMoveSubject = new Subject<Vector2>();
+        private readonly Subject<Unit> _pointerUpSubject = new ();
+        private readonly Subject<Vector2> _pointerMoveSubject = new ();
         private IDisposable _clickSubscription;
         private IDisposable _dragSubscription;
 
@@ -46,9 +46,8 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
             
             // 親（draggableArea）のローカル座標におけるポインター位置を取得し、
             // その時の子の anchoredPosition との差分をオフセットとして記録
-            Vector2 localPoint;
             if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    draggableArea, eventData.position, eventData.pressEventCamera, out localPoint))
+                    draggableArea, eventData.position, eventData.pressEventCamera, out var localPoint))
             {
                 _dragOffset = localPoint - _rectTransform.anchoredPosition;
             }
@@ -67,7 +66,6 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
                     _ =>
                     {
                         _isDragging = true; // 0.3秒経過でドラッグモードに移行
-                        Debug.Log("Dragging Mode Start");
                     },
                     ex => Debug.LogError("Timer error: " + ex),
                     _ =>
@@ -98,7 +96,6 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
         {
             if (!_isDragging)
             {
-                Debug.Log("Click Detected");
                 _interactUIPublisher.Publish(InteractUI.ClickButton(gameObject, message));
             }
         }
@@ -111,18 +108,14 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
         {
             if (!_isDragging) return;
 
-            Vector2 localPoint;
             // Canvas が Screen Space Overlay なら第三引数は null で問題ありません
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    draggableArea, screenPosition, null, out localPoint))
-            {
-                // 子の anchoredPosition = (ローカル座標 - オフセット)
-                Vector2 targetAnchoredPosition = localPoint - _dragOffset;
-                // ClampToDraggableArea で、子の実際の表示位置が親内に収まるよう制限
-                targetAnchoredPosition = ClampToDraggableArea(targetAnchoredPosition);
-                _rectTransform.anchoredPosition = targetAnchoredPosition;
-                Debug.Log($"Dragging to: {targetAnchoredPosition}");
-            }
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    draggableArea, screenPosition, null, out var localPoint)) return;
+            // 子の anchoredPosition = (ローカル座標 - オフセット)
+            var targetAnchoredPosition = localPoint - _dragOffset;
+            // ClampToDraggableArea で、子の実際の表示位置が親内に収まるよう制限
+            targetAnchoredPosition = ClampToDraggableArea(targetAnchoredPosition);
+            _rectTransform.anchoredPosition = targetAnchoredPosition;
         }
 
         /// <summary>
@@ -138,29 +131,29 @@ namespace PoppoKoubou.CommonLibrary.UI.Presentation
         private Vector2 ClampToDraggableArea(Vector2 targetAnchoredPosition)
         {
             // 親（draggableArea）のローカル座標系での矩形
-            Rect parentRect = draggableArea.rect;
+            var parentRect = draggableArea.rect;
             // 子のアンカー値（anchorMin==anchorMax を前提とする）
-            Vector2 childAnchor = _rectTransform.anchorMin;
+            var childAnchor = _rectTransform.anchorMin;
             // 親内のアンカー基準点は、親の矩形の xMin～xMax, yMin～yMax を補間して求める
-            Vector2 anchorPoint = new Vector2(
+            var anchorPoint = new Vector2(
                 Mathf.Lerp(parentRect.xMin, parentRect.xMax, childAnchor.x),
                 Mathf.Lerp(parentRect.yMin, parentRect.yMax, childAnchor.y)
             );
             // 子のサイズの半分（例：64x64 なら (32,32)）をマージンとして設定
-            Vector2 iconHalfSize = _rectTransform.rect.size * 0.5f;
+            var iconHalfSize = _rectTransform.rect.size * 0.5f;
 
             // 子の実際の位置 = anchorPoint + anchoredPosition が、
             // 親の矩形内（左：parentRect.xMin, 右：parentRect.xMax, など）に収まる条件：
             // parent's xMin + iconHalfSize.x <= (anchorPoint.x + anchoredPosition.x) <= parent's xMax - iconHalfSize.x
             // すなわち、anchoredPosition.x は：
             // [parentRect.xMin + iconHalfSize.x - anchorPoint.x, parentRect.xMax - iconHalfSize.x - anchorPoint.x]
-            float minX = parentRect.xMin + iconHalfSize.x - anchorPoint.x;
-            float maxX = parentRect.xMax - iconHalfSize.x - anchorPoint.x;
-            float minY = parentRect.yMin + iconHalfSize.y - anchorPoint.y;
-            float maxY = parentRect.yMax - iconHalfSize.y - anchorPoint.y;
+            var minX = parentRect.xMin + iconHalfSize.x - anchorPoint.x;
+            var maxX = parentRect.xMax - iconHalfSize.x - anchorPoint.x;
+            var minY = parentRect.yMin + iconHalfSize.y - anchorPoint.y;
+            var maxY = parentRect.yMax - iconHalfSize.y - anchorPoint.y;
 
-            float clampedX = Mathf.Clamp(targetAnchoredPosition.x, minX, maxX);
-            float clampedY = Mathf.Clamp(targetAnchoredPosition.y, minY, maxY);
+            var clampedX = Mathf.Clamp(targetAnchoredPosition.x, minX, maxX);
+            var clampedY = Mathf.Clamp(targetAnchoredPosition.y, minY, maxY);
 
             return new Vector2(clampedX, clampedY);
         }

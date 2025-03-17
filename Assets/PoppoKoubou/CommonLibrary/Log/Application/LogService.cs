@@ -5,6 +5,7 @@ using MessagePipe;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.AggregateService.Infrastructure;
 using PoppoKoubou.CommonLibrary.Log.Domain;
+using PoppoKoubou.CommonLibrary.Log.Infrastructure;
 using UnityEngine;
 using VContainer;
 
@@ -23,14 +24,14 @@ namespace PoppoKoubou.CommonLibrary.Log.Application
             ISubscriber<CentralHubStatus> centralHubStatusSubscriber,
             IPublisher<ServiceNodeStatus> serviceNodeStatusPublisher)
             : base(
-                "ログサービス",
-                0,
+                "Log Service",
+                10,
                 logPublisher,
                 centralHubStatusSubscriber,
                 serviceNodeStatusPublisher)
         {
-            Debug.Log($"LogService.LogService()");
             _logProvider = logProvider;
+            logPublisher.Debug($"LogService.LogService()");
         }
         
         /// <summary>サービス初期化</summary>
@@ -38,7 +39,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Application
         {
             // ログプロバイダ初期化
             _logProvider.Initialize();
-            LogPublisher.Publish(LogMessage.AddLine($"LogService.StartInitialize()", LogLevel.Debug));
+            LogPublisher.Debug($"LogService.StartInitialize()");
             // 1ミリ秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct);
         }
@@ -46,7 +47,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Application
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            LogPublisher.Publish(LogMessage.AddLine($"LogService.StartService()", LogLevel.Debug));
+            LogPublisher.Debug($"LogService.StartService()");
             // 1ミリ秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct);
         }
@@ -54,7 +55,7 @@ namespace PoppoKoubou.CommonLibrary.Log.Application
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
-            LogPublisher.Publish(LogMessage.AddLine($"LogService.Dispose()", LogLevel.Debug));
+            LogPublisher.Debug($"LogService.Dispose()");
             _logProvider?.Dispose();
         }
     }

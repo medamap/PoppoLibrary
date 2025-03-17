@@ -4,6 +4,7 @@ using MessagePack.Formatters;
 using MessagePack.Resolvers;
 using MessagePipe;
 using MessagePipe.Interprocess;
+using MessagePipe.Interprocess.Workers;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using PoppoKoubou.CommonLibrary.Network.Domain;
@@ -29,6 +30,7 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
                 new ServiceNodeInfoFormatter(),
                 new LogMessageFormatter(),
                 new NetworkInfoFormatter(),
+                new TcpMessageFormatter(),
                 new UdpMessageFormatter(),
                 new InteractUIFormatter(),
                 new ClickUIFormatter(),
@@ -46,8 +48,8 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
             );
         }
 
-        /// <summary>ぽっぽライブラリのカスタムメッセージブローカを登録</summary>
-        public static void RegisterPoppoKoubouInterprocessMessageBroker(this IContainerBuilder builder, MessagePipeInterprocessOptions options)
+        /// <summary>ぽっぽライブラリのUDPカスタムメッセージブローカを登録</summary>
+        public static void RegisterPoppoKoubouInterprocessUdpMessageBroker(this IContainerBuilder builder, MessagePipeInterprocessOptions options)
         {
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, CentralHubStatus>(options);
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, ServiceNodeInfo>(options);
@@ -57,6 +59,26 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, InteractUI>(options);
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, ClickUI>(options);
             builder.ToMessagePipeBuilder().RegisterUpdInterprocessMessageBroker<string, UpdateUI>(options);
+        }
+        /// <summary>ぽっぽライブラリのTCPカスタムメッセージブローカを登録</summary>
+        public static void RegisterPoppoKoubouInterprocessTcpMessageBroker(this IContainerBuilder builder, MessagePipeInterprocessOptions options)
+        {
+            // ここからおまじない開始 ----------
+            // TcpWorkerを明示的に登録
+            builder.Register<TcpWorker>(Lifetime.Singleton).WithParameter(options);
+            // すべての基底クラスを明示的に登録
+            builder.RegisterInstance<>(options);
+            if (options is MessagePipeInterprocessTcpOptions tcpOptions)
+            {
+                builder.RegisterInstance<>(tcpOptions);
+        
+                if (options is MessagePipeInterprocessTcpExtendedOptions extendedOptions)
+                {
+                    //builder.RegisterInstance<>(extendedOptions);
+                }
+            }
+            // おまじない終わり（これは必ず直す） ----------
+            builder.ToMessagePipeBuilder().RegisterTcpInterprocessMessageBroker<string, TcpMessage>(options);
         }
     }
 }

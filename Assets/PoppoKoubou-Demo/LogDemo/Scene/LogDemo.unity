@@ -528,7 +528,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3754162710424358485, guid: 33edab6550c93de49b2fa4af80426e92, type: 3}
       propertyPath: m_Padding.m_Top
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3754162710424358485, guid: 33edab6550c93de49b2fa4af80426e92, type: 3}
       propertyPath: m_Padding.m_Left
@@ -540,7 +540,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3754162710424358485, guid: 33edab6550c93de49b2fa4af80426e92, type: 3}
       propertyPath: m_Padding.m_Bottom
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3983034389356136872, guid: 33edab6550c93de49b2fa4af80426e92, type: 3}
       propertyPath: m_AnchorMax.x

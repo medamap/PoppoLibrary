@@ -8,6 +8,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using VContainer;
 
+// ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable once ClassNeverInstantiated.Global
 
 namespace PoppoKoubou.CommonLibrary.Network.Infrastructure
@@ -27,17 +28,13 @@ namespace PoppoKoubou.CommonLibrary.Network.Infrastructure
         public NetworkInfo GetNetworkInfo(CancellationToken token = default)
         {
             // キャンセルチェック
-            if (!token.Equals(default)) token.ThrowIfCancellationRequested();
+            if (!token.Equals(CancellationToken.None)) token.ThrowIfCancellationRequested();
             
             var logs = new List<string>();
             logs.Add("GetNetworkInfo()");
 
             // すべてのインターフェース名を取得してログに記録
-            var allInterfaceNames = new List<string>();
-            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
-            {
-                allInterfaceNames.Add(ni.Name);
-            }
+            var allInterfaceNames = NetworkInterface.GetAllNetworkInterfaces().Select(ni => ni.Name).ToList();
             logs.Add($"All Interfaces: {string.Join(", ", allInterfaceNames)}");
 
             // 稼働中かつループバック以外、かつ名前が "dummy" で始まらないインターフェースを取得
@@ -46,10 +43,11 @@ namespace PoppoKoubou.CommonLibrary.Network.Infrastructure
                              ni.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
                              !ni.Name.StartsWith("dummy", System.StringComparison.OrdinalIgnoreCase));
 
-            logs.Add($"Valid Interface Count: {interfaces.Count()}");
+            var networkInterfaces = interfaces as NetworkInterface[] ?? interfaces.ToArray();
+            logs.Add($"Valid Interface Count: {networkInterfaces.Count()}");
             
             // 各インターフェースにスコアを付与して、最もスコアの高い候補を選択
-            var candidate = interfaces
+            var candidate = networkInterfaces
                 .Select(ni => new { Interface = ni, Score = ComputeInterfaceScore(ni) })
                 .OrderByDescending(x => x.Score)
                 .FirstOrDefault();
@@ -65,7 +63,7 @@ namespace PoppoKoubou.CommonLibrary.Network.Infrastructure
             logs.Add($"Selected Interface Score : {candidate.Score}");
             
             // キャンセルチェック
-            if (!token.Equals(default)) token.ThrowIfCancellationRequested();
+            if (!token.Equals(CancellationToken.None)) token.ThrowIfCancellationRequested();
 
             var selectedInterface = candidate.Interface;
             var ipProps = selectedInterface.GetIPProperties();
@@ -75,7 +73,7 @@ namespace PoppoKoubou.CommonLibrary.Network.Infrastructure
             // IPv4 のデフォルトゲートウェイ（ルータIP）を取得
             var gatewayAddress = ipProps.GatewayAddresses
                 .FirstOrDefault(g => g.Address.AddressFamily == AddressFamily.InterNetwork)?.Address;
-            string gateway = "";
+            var gateway = "";
             if (gatewayAddress == null)
             {
                 logs.Add("No valid IPv4 Gateway found. Gateway will be empty.");
@@ -98,7 +96,7 @@ namespace PoppoKoubou.CommonLibrary.Network.Infrastructure
             logs.Add($"Local IP : {unicastInfo.Address}");
             
             // キャンセルチェック
-            if (!token.Equals(default)) token.ThrowIfCancellationRequested();
+            if (!token.Equals(CancellationToken.None)) token.ThrowIfCancellationRequested();
 
             var localIP = unicastInfo.Address;
             var subnetMask = unicastInfo.IPv4Mask;
@@ -150,18 +148,18 @@ namespace PoppoKoubou.CommonLibrary.Network.Infrastructure
         {
             double score = 0;
 
-            if (ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet ||
-                ni.NetworkInterfaceType == NetworkInterfaceType.GigabitEthernet)
+            switch (ni.NetworkInterfaceType)
             {
-                score += 10000;
-            }
-            else if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
-            {
-                score += 5000;
-            }
-            else
-            {
-                score += 1000;
+                case NetworkInterfaceType.Ethernet:
+                case NetworkInterfaceType.GigabitEthernet:
+                    score += 10000;
+                    break;
+                case NetworkInterfaceType.Wireless80211:
+                    score += 5000;
+                    break;
+                default:
+                    score += 1000;
+                    break;
             }
 
             // Speed を Mbps 単位で加算

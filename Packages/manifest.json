@@ -12,7 +12,7 @@
     "com.unity.ugui": "2.0.0",
     "com.unity.visualscripting": "1.9.5",
     "jp.hadashikick.vcontainer": "https://github.com/hadashiA/VContainer.git?path=VContainer/Assets/VContainer#1.16.8",
-    "jp.megamin.messagepipe.interprocess": "https://github.com/medamap/MessagePipe.git?path=src/MessagePipe.Interprocess#feature/android_interprocess",
+    "jp.megamin.messagepipe.interprocess": "https://github.com/medamap/MessagePipe.git?path=src/MessagePipe.Interprocess#1.8.1-extended.15",
     "org.nuget.messagepack": "3.1.3",
     "org.nuget.microsoft.net.stringtools": "1.0.0",
     "org.nuget.observablecollections.r3": "3.3.3",

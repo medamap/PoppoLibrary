@@ -7,7 +7,6 @@ using PoppoKoubou.CommonLibrary.AggregateService.Infrastructure;
 using PoppoKoubou.CommonLibrary.Log.Domain;
 using PoppoKoubou.CommonLibrary.Log.Infrastructure;
 using PoppoKoubou.CommonLibrary.UI.Domain;
-using UnityEngine;
 using VContainer;
 
 namespace PoppoKoubou.CommonLibrary.UI.Application
@@ -27,20 +26,20 @@ namespace PoppoKoubou.CommonLibrary.UI.Application
             ISubscriber<CentralHubStatus> centralHubStatusSubscriber,
             IPublisher<ServiceNodeStatus> serviceNodeStatusPublisher)
             : base(
-                "UIサービス",
-                0,
+                "UI Service",
+                20,
                 logPublisher,
                 centralHubStatusSubscriber,
                 serviceNodeStatusPublisher)
         {
-            Debug.Log($"UIService.UIService()");
+            LogPublisher.Debug($"UIService.UIService()");
             _interactUIDispatch = interactUIDispatch;
         }
         
         /// <summary>サービス初期化</summary>
         protected override async UniTask StartInitialize(CancellationToken ct)
         {
-            LogPublisher.AddLine($"UIService.StartInitialize()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"UIService.StartInitialize()", ServiceLogColor);
             // UIインタラクトディスパッチ初期化
             _interactUIDispatch.Initialize();
             // 1ミリ秒待機
@@ -50,7 +49,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Application
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            LogPublisher.AddLine($"UIService.StartService()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"UIService.StartService()", ServiceLogColor);
             // 1ミリ秒待機
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct);
         }
@@ -58,7 +57,7 @@ namespace PoppoKoubou.CommonLibrary.UI.Application
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
-            LogPublisher.AddLine($"UIService.Dispose()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"UIService.Dispose()", ServiceLogColor);
             _interactUIDispatch?.Dispose();
         }
     }

@@ -5,18 +5,19 @@ using MessagePipe;
 using PoppoKoubou.CommonLibrary.AggregateService.Domain;
 using PoppoKoubou.CommonLibrary.AggregateService.Infrastructure;
 using PoppoKoubou.CommonLibrary.Log.Domain;
+using PoppoKoubou.CommonLibrary.Log.Infrastructure;
 using UnityEngine;
 using VContainer;
 
-namespace PoppoKoubou_Demo.LogDemo.Boot.Application
+namespace PoppoKoubou_Demo.LogDemo.LogDemoBoot.Application
 {
     /// <summary>ブートサービス</summary>
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class BootService : ServiceNode
+    public class LogDemoBootService : ServiceNode
     {
 
         /// <summary>依存注入</summary>
-        [Inject] public BootService(
+        [Inject] public LogDemoBootService(
             IPublisher<LogMessage> logPublisher,
             ISubscriber<CentralHubStatus> centralHubStatusSubscriber,
             IPublisher<ServiceNodeStatus> serviceNodeStatusPublisher)
@@ -33,21 +34,21 @@ namespace PoppoKoubou_Demo.LogDemo.Boot.Application
         /// <summary>サービス初期化</summary>
         protected override async UniTask StartInitialize(CancellationToken ct)
         {
-            LogAddLine($"BootService.StartInitialize()", ServiceLogColor);
+            LogPublisher.Debug($"BootService.StartInitialize()", ServiceLogColor);
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct); // 1ミリ秒待機
         }
         
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            LogAddLine($"BootService.StartService()", ServiceLogColor);
+            LogPublisher.Debug($"BootService.StartService()", ServiceLogColor);
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct); // 1ミリ秒待機
         }
         
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
-            LogAddLine($"BootService.Dispose()", ServiceLogColor);
+            LogPublisher.Debug($"BootService.Dispose()", ServiceLogColor);
         }
     }
 }

@@ -30,13 +30,13 @@ namespace PoppoKoubou.CommonLibrary.Network.Application
             INetworkInfoProvider networkInfoProvider,
             INetworkInfoContainer networkInfoContainer)
             : base(
-                "ネットワークサービス",
-                100,
+                "Network Service",
+                90,
                 logPublisher,
                 centralHubStatusSubscriber,
                 serviceNodeStatusPublisher)
         {
-            Debug.Log($"NetworkService.NetworkService()");
+            LogPublisher.Debug($"NetworkService.NetworkService()");
             _networkInfoProvider = networkInfoProvider;
             _networkInfoContainer = networkInfoContainer;
         }
@@ -44,27 +44,27 @@ namespace PoppoKoubou.CommonLibrary.Network.Application
         /// <summary>サービス初期化</summary>
         protected override async UniTask StartInitialize(CancellationToken ct)
         {
-            LogPublisher.AddLine($"NetworkService.StartInitialize()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"NetworkService.StartInitialize()", ServiceLogColor);
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct); // 1ミリ秒待機
             // ネットワーク情報取得
-            LogPublisher.AddLine("ネットワーク情報取得", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug("ネットワーク情報取得", ServiceLogColor);
             var networkInfo = await _networkInfoProvider.GetNetworkInfoAsync(ct);
             if (networkInfo is { IsError: false })
             {
-                LogPublisher.AddLine("ネットワーク情報", LogLevel.Debug, ServiceLogColor);
-                LogPublisher.AddLine("Local IP : " + networkInfo.LocalIPAddress, LogLevel.Debug, ServiceLogColor);
-                LogPublisher.AddLine("Gateway : " + networkInfo.DefaultGateway, LogLevel.Debug, ServiceLogColor);
-                LogPublisher.AddLine("Subnet Mask : " + networkInfo.SubnetMask, LogLevel.Debug, ServiceLogColor);
-                LogPublisher.AddLine("Network Address : " + networkInfo.NetworkAddress, LogLevel.Debug, ServiceLogColor);
-                LogPublisher.AddLine("Broadcast Address : " + networkInfo.BroadcastAddress, LogLevel.Debug, ServiceLogColor);
+                LogPublisher.Debug("ネットワーク情報", ServiceLogColor);
+                LogPublisher.Debug("Local IP : " + networkInfo.LocalIPAddress, ServiceLogColor);
+                LogPublisher.Debug("Gateway : " + networkInfo.DefaultGateway, ServiceLogColor);
+                LogPublisher.Debug("Subnet Mask : " + networkInfo.SubnetMask, ServiceLogColor);
+                LogPublisher.Debug("Network Address : " + networkInfo.NetworkAddress, ServiceLogColor);
+                LogPublisher.Debug("Broadcast Address : " + networkInfo.BroadcastAddress, ServiceLogColor);
                 _networkInfoContainer.SetNetworkInfo(networkInfo);
             }
             else
             {
-                LogPublisher.AddLine("ネットワーク情報が取得できませんでした", LogLevel.Error, ServiceLogColor);
+                LogPublisher.Error("ネットワーク情報が取得できませんでした", ServiceLogColor);
                 foreach (var log in networkInfo.LOG)
                 {
-                    ErrorAddLine(log);
+                    LogPublisher.Error(log);
                 }
             }
         }
@@ -72,14 +72,14 @@ namespace PoppoKoubou.CommonLibrary.Network.Application
         /// <summary>サービス開始</summary>
         protected override async UniTask StartService(CancellationToken ct)
         {
-            LogPublisher.AddLine($"NetworkService.StartService()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"NetworkService.StartService()", ServiceLogColor);
             await UniTask.Delay(TimeSpan.FromMilliseconds(1), cancellationToken: ct); // 1ミリ秒待機
         }
         
         /// <summary>リソース解放</summary>
         public override void Dispose()
         {
-            LogPublisher.AddLine($"NetworkService.Dispose()", LogLevel.Debug, ServiceLogColor);
+            LogPublisher.Debug($"NetworkService.Dispose()", ServiceLogColor);
         }
     }
 }
