@@ -73,8 +73,8 @@
 - 色々と他に依存しているパッケージも大量に含まれているからごめんしてね
 
 ```json
-    "jp.megamin.poppokoubou.library": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou#1.0.20",
-    "jp.megamin.poppokoubou.library.demo": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou-Demo#1.0.20",
+    "jp.megamin.poppokoubou.library": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou#1.0.21",
+    "jp.megamin.poppokoubou.library.demo": "https://github.com/medamap/PoppoLibrary.git?path=Assets/PoppoKoubou-Demo#1.0.21",
     "com.cysharp.messagepipe": "1.8.1",
     "com.cysharp.messagepipe.vcontainer": "1.8.1",
     "jp.megamin.messagepipe.interprocess": "https://github.com/medamap/MessagePipe.git?path=src/MessagePipe.Interprocess#1.8.1-extended.15",

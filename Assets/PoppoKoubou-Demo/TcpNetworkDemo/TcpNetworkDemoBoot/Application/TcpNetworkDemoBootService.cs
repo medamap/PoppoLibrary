@@ -86,10 +86,6 @@ namespace PoppoKoubou_Demo.TcpNetworkDemo.TcpNetworkDemoBoot.Application
                     MaxRetryCount = 3,
                     MessagePackSerializerOptions = serializerOptions
                 };
-                // すべての基底クラスを明示的に登録
-                //builder.RegisterInstance<MessagePipeInterprocessOptions>(tcpOptions);
-                //builder.RegisterInstance<MessagePipeInterprocessTcpOptions>(tcpOptions);
-                //builder.RegisterInstance<MessagePipeInterprocessTcpExtendedOptions>(tcpOptions);
                 // UDP メッセージブローカー登録
                 builder.RegisterPoppoKoubouInterprocessUdpMessageBroker(udpOptions);
                 // TCP メッセージブローカー登録

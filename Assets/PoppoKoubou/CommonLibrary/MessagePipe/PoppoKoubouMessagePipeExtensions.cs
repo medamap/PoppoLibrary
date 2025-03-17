@@ -67,14 +67,14 @@ namespace PoppoKoubou.CommonLibrary.MessagePipe
             // TcpWorkerを明示的に登録
             builder.Register<TcpWorker>(Lifetime.Singleton).WithParameter(options);
             // すべての基底クラスを明示的に登録
-            builder.RegisterInstance<>(options);
+            builder.RegisterInstance(options);
             if (options is MessagePipeInterprocessTcpOptions tcpOptions)
             {
-                builder.RegisterInstance<>(tcpOptions);
+                builder.RegisterInstance(tcpOptions);
         
                 if (options is MessagePipeInterprocessTcpExtendedOptions extendedOptions)
                 {
-                    //builder.RegisterInstance<>(extendedOptions);
+                    //builder.RegisterInstance(extendedOptions);
                 }
             }
             // おまじない終わり（これは必ず直す） ----------
