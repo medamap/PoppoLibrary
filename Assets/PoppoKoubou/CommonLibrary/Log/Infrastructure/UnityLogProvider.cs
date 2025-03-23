@@ -41,7 +41,22 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
             // ログを受信したらコンソールに出力する
             var disposables = DisposableBag.CreateBuilder();
             _logSubscriber.Subscribe(
-                logMessage => Debug.Log(_formatter.Format(logMessage)),
+                //logMessage => Debug.Log(_formatter.Format(logMessage)),
+                logMessage =>
+                {
+                    switch (logMessage.Level)
+                    {
+                        case LogLevel.Debug:
+                        case LogLevel.Info:
+                            Debug.Log(logMessage.Message); break;
+                        case LogLevel.Warning:
+                            Debug.LogWarning(logMessage.Message); break;
+                        case LogLevel.Error:
+                        case LogLevel.Fatal:
+                            Debug.LogError(logMessage.Message); break;
+                        default: Debug.Log(logMessage.Message); break;
+                    }
+                },
                 logMessage => _logApi.IsEnabledLogLevel(logMessage))
                 .AddTo(disposables);
             _disposable = disposables.Build();
