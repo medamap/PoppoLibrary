@@ -124,11 +124,21 @@ namespace PoppoKoubou.CommonLibrary.Log.Infrastructure
         /// <summary>テキストがオーバーフローしているかどうかを判定する</summary>
         private bool IsTextOverflowing(int overLine = 0)
         {
-            // テキストの再構築
-            _tmpText.ForceMeshUpdate();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(_tmpText.rectTransform);
-            // テキストの必要な高さとRectTransformの高さを比較
-            return _tmpText.preferredHeight > _tmpText.rectTransform.rect.height + overLine;
+            try
+            {
+                if (_tmpText == null) return false;
+        
+                // テキストの再構築
+                _tmpText.ForceMeshUpdate();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_tmpText.rectTransform);
+                // テキストの必要な高さとRectTransformの高さを比較
+                return _tmpText.preferredHeight > _tmpText.rectTransform.rect.height + overLine;
+            }
+            catch (Exception)
+            {
+                // エラーが発生した場合は安全のためfalseを返す
+                return false;
+            }
         }
 
         /// <summary>リソース解放</summary>
